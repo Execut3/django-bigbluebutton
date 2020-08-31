@@ -1,10 +1,6 @@
-# django-bigbluebutton (DO NOT USE yet)
-
-### Under development. not ready to be used!
+# django-bigbluebutton
 
 A Django Application for better interaction of Django projects with Big Blue Button APIs.
-
-
 
 ### Requirements
 
@@ -23,3 +19,32 @@ install using pip:
 ```
 $ pip install django-bigbluebutton
 ```
+
+### Usage
+Register app in `settings.py`
+
+```
+INSTALLED_APPS = [
+    "django_bigbluebutton",
+]
+```
+
+Now should define you Big Blue Button Server core configs in `settings.py`:
+
+```
+BBB_API_URL = 'https://test.com/bigbluebutton/api/'
+BBB_SECRET_KEY = 'abcdefgabcdefgabcdefgabcdefgabcdefg'
+```
+
+Next apply migrations:
+```
+python manage.py migrate
+```
+
+And finally run test:
+
+```
+python manage.py test
+```
+
+You can follow `tests.py` file to see how to use this package.

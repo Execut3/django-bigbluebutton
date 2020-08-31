@@ -9,6 +9,7 @@ class BBBTest(TestCase):
 
     def test_get_meetings(self):
         meetings = BigBlueButton().get_meetings()
+        print(meetings)
 
         # If error in getMeetings() will return 'error' value instead of list of meeting rooms
         self.assertTrue(meetings != 'error')
@@ -56,8 +57,18 @@ class BBBTest(TestCase):
 
     def test_create_meeting2(self):
         """ Will just call cls method in Meeting model. """
-        meeting_name = 'test'
-        meeting_id = 'test'
+        meeting_name = 'test2'
+        meeting_id = 'test2'
         meeting_welcome = 'test meeting welcome!'
         m = Meeting.create(meeting_name, meeting_id, meeting_welcome)
         self.assertTrue(type(m) == Meeting)
+
+    def test_join_meeting(self):
+        """ Will just call cls method in Meeting model. """
+        meeting_name = 'test'
+        meeting_id = 'test'
+        meeting_welcome = 'test meeting welcome!'
+        meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome)
+
+        b = BigBlueButton().join_url(meeting.meeting_id, 'reza torkaman ahmadi', meeting.attendee_password)
+        print(b)

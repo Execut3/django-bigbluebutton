@@ -49,7 +49,7 @@ class Meeting(models.Model):
         )
 
     @classmethod
-    def create(cls, name, meeting_id, meeting_welcome='Welcome!', ):
+    def create(cls, name, meeting_id, meeting_welcome='Welcome!'):
         m_xml = BigBlueButton().start(
             name=name,
             meeting_id=meeting_id,
