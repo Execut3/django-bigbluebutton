@@ -37,14 +37,14 @@ class Meeting(models.Model):
 
     @classmethod
     def api_call(cls, query, call):
-        prepared = "%s%s%s" % (call, query, settings.SALT)
-        checksum = sha1(prepared).hexdigest()
+        prepared = '{}{}{}'.format(call, query, settings.BBB_SECRET_KEY)
+        checksum = sha1(str(prepared).encode('utf-8')).hexdigest()
         result = "%s&checksum=%s" % (query, checksum)
         return result
 
     def is_running(self):
         call = 'isMeetingRunning'
-        query = urllib.urlencode((
+        query = urllib.parse.urlencode((
             ('meetingID', self.meeting_id),
         ))
         hashed = self.api_call(query, call)
@@ -58,7 +58,7 @@ class Meeting(models.Model):
     @classmethod
     def end_meeting(cls, meeting_id, password):
         call = 'end'
-        query = urllib.urlencode((
+        query = urllib.parse.urlencode((
             ('meetingID', meeting_id),
             ('password', password),
         ))
@@ -73,7 +73,7 @@ class Meeting(models.Model):
     @classmethod
     def meeting_info(cls, meeting_id, password):
         call = 'getMeetingInfo'
-        query = urllib.urlencode((
+        query = urllib.parse.urlencode((
             ('meetingID', meeting_id),
             ('password', password),
         ))
@@ -97,8 +97,8 @@ class Meeting(models.Model):
 
     @classmethod
     def get_meetings(cls):
-        call = 'getMeetings'
-        query = urllib.urlencode((
+        call = 'getMeetingss'
+        query = urllib.parse.urlencode((
             ('random', 'random'),
         ))
         hashed = cls.api_call(query, call)
@@ -127,7 +127,7 @@ class Meeting(models.Model):
     def start(self):
         call = 'create'
         voicebridge = 70000 + random.randint(0, 9999)
-        query = urllib.urlencode((
+        query = urllib.parse.urlencode((
             ('name', self.name),
             ('meetingID', self.meeting_id),
             ('attendeePW', self.attendee_password),
@@ -146,7 +146,7 @@ class Meeting(models.Model):
     @classmethod
     def join_url(cls, meeting_id, name, password):
         call = 'join'
-        query = urllib.urlencode((
+        query = urllib.parse.urlencode((
             ('fullName', name),
             ('meetingID', meeting_id),
             ('password', password),
