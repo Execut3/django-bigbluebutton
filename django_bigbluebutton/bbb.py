@@ -11,6 +11,8 @@ from .utils import parse_xml
 class BigBlueButton:
     secret_key = settings.BBB_SECRET_KEY
     api_url = settings.BBB_API_URL
+    attendee_password = 'ap'
+    moderator_password = 'mp'
 
     def api_call(self, query, call):
         prepared = '{}{}{}'.format(call, query, self.secret_key)
@@ -108,8 +110,12 @@ class BigBlueButton:
         url = self.api_url + call + '?' + hashed
         return url
 
-    def start(self, name, meeting_id, attendee_password='', moderator_password=''):
+    def start(self, name, meeting_id, attendee_password='', moderator_password='', welcome='Welcome!'):
         call = 'create'
+        if not attendee_password:
+            attendee_password = self.attendee_password
+        if not moderator_password:
+            moderator_password = self.moderator_password
         voicebridge = 70000 + random.randint(0, 9999)
         query = urllib.parse.urlencode((
             ('name', name),
@@ -117,11 +123,11 @@ class BigBlueButton:
             ('attendeePW', attendee_password),
             ('moderatorPW', moderator_password),
             ('voiceBridge', voicebridge),
-            ('welcome', "Welcome!"),
+            ('welcome', welcome),
         ))
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
-        result = parse_xml(requests.get(url).content)
+        result = parse_xml(requests.get(url).content.decode('utf-8'))
         if result:
             return result
         else:
