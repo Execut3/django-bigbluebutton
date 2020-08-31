@@ -9,6 +9,7 @@ from hashlib import sha1
 import xml.etree.ElementTree as ET
 import random
 
+
 def parse(response):
     try:
         xml = ET.XML(response)
@@ -20,8 +21,8 @@ def parse(response):
     except:
         return None
 
-class Meeting(models.Model):
 
+class Meeting(models.Model):
     name = models.CharField(max_length=100, unique=True)
     meeting_id = models.CharField(max_length=100, unique=True)
     attendee_password = models.CharField(max_length=50)
@@ -117,8 +118,8 @@ class Meeting(models.Model):
             return 'error'
 
     def start(self):
-        call = 'create' 
-        voicebridge = 70000 + random.randint(0,9999)
+        call = 'create'
+        voicebridge = 70000 + random.randint(0, 9999)
         query = urlencode((
             ('name', self.name),
             ('meetingID', self.meeting_id),
@@ -151,7 +152,7 @@ class Meeting(models.Model):
         name = forms.SlugField()
         attendee_password = forms.CharField(
             widget=forms.PasswordInput(render_value=False))
-        moderator_password= forms.CharField(
+        moderator_password = forms.CharField(
             widget=forms.PasswordInput(render_value=False))
 
         def clean(self):
@@ -160,7 +161,7 @@ class Meeting(models.Model):
             # TODO: should check for errors before modifying
             data['meeting_id'] = data.get('name')
 
-            if Meeting.objects.filter(name = data.get('name')):
+            if Meeting.objects.filter(name=data.get('name')):
                 raise forms.ValidationError("That meeting name is already in use")
             return data
 
