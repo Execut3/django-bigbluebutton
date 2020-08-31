@@ -1,31 +1,14 @@
-import urllib
-import random
-import requests
-
-from hashlib import sha1
-from django.db import models
-from django.conf import settings
-
 import django_jalali.db.models as jmodels
-import xml.etree.ElementTree as ET
+from django.db import models
 
-
-def parse(response):
-    try:
-        xml = ET.XML(response)
-        code = xml.find('returncode').text
-        if code == 'SUCCESS':
-            return xml
-        else:
-            raise
-    except:
-        return None
+from .bbb import BigBlueButton
 
 
 class Meeting(models.Model):
-    """ This models hold information about each meeting room.
-    When creating a big blue button room with BBB APIs, will store
-    it's info here for later usages.
+    """
+        This models hold information about each meeting room.
+        When creating a big blue button room with BBB APIs,
+        Will store it's info here for later usages.
     """
     name = models.CharField(max_length=100)
     meeting_id = models.CharField(max_length=100, unique=True)
@@ -35,122 +18,17 @@ class Meeting(models.Model):
     created_at = jmodels.jDateTimeField(auto_now_add=True)
     updated_at = jmodels.jDateTimeField(auto_now=True)
 
-    @classmethod
-    def api_call(cls, query, call):
-        prepared = '{}{}{}'.format(call, query, settings.BBB_SECRET_KEY)
-        checksum = sha1(str(prepared).encode('utf-8')).hexdigest()
-        result = "%s&checksum=%s" % (query, checksum)
-        return result
+    def __str__(self):
+        return '{}-{}'.format(self.id, self.name)
 
+    @property
     def is_running(self):
-        call = 'isMeetingRunning'
-        query = urllib.parse.urlencode((
-            ('meetingID', self.meeting_id),
-        ))
-        hashed = self.api_call(query, call)
-        url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(requests.get(url).content)
-        if result:
-            return result.find('running').text
-        else:
-            return 'error'
-
-    @classmethod
-    def end_meeting(cls, meeting_id, password):
-        call = 'end'
-        query = urllib.parse.urlencode((
-            ('meetingID', meeting_id),
-            ('password', password),
-        ))
-        hashed = cls.api_call(query, call)
-        url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(requests.get(url).content)
-        if result:
-            pass
-        else:
-            return 'error'
-
-    @classmethod
-    def meeting_info(cls, meeting_id, password):
-        call = 'getMeetingInfo'
-        query = urllib.parse.urlencode((
-            ('meetingID', meeting_id),
-            ('password', password),
-        ))
-        hashed = cls.api_call(query, call)
-        url = settings.BBB_API_URL + call + '?' + hashed
-        r = parse(requests.get(url).content)
-        if r:
-            # Create dict of values for easy use in template
-            d = {
-                'start_time': r.find('startTime').text,
-                'end_time': r.find('endTime').text,
-                'participant_count': r.find('participantCount').text,
-                'moderator_count': r.find('moderatorCount').text,
-                'moderator_pw': r.find('moderatorPW').text,
-                'attendee_pw': r.find('attendeePW').text,
-                # 'invite_url': reverse('join', args=[meeting_id]),
-            }
-            return d
-        else:
-            return None
-
-    @classmethod
-    def get_meetings(cls):
-        call = 'getMeetingss'
-        query = urllib.parse.urlencode((
-            ('random', 'random'),
-        ))
-        hashed = cls.api_call(query, call)
-        url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(requests.get(url).content)
-        if result:
-            # Create dict of values for easy use in template
-            d = []
-            r = result[1].findall('meeting')
-            for m in r:
-                meeting_id = m.find('meetingID').text
-                password = m.find('moderatorPW').text
-                d.append({
-                    'name': meeting_id,
-                    'running': m.find('running').text,
-                    'moderator_pw': password,
-                    'attendee_pw': m.find('attendeePW').text,
-                    'info': Meeting.meeting_info(
-                        meeting_id,
-                        password)
-                })
-            return d
-        else:
-            return 'error'
+        return BigBlueButton().is_running(self.meeting_id)
 
     def start(self):
-        call = 'create'
-        voicebridge = 70000 + random.randint(0, 9999)
-        query = urllib.parse.urlencode((
-            ('name', self.name),
-            ('meetingID', self.meeting_id),
-            ('attendeePW', self.attendee_password),
-            ('moderatorPW', self.moderator_password),
-            ('voiceBridge', voicebridge),
-            ('welcome', "Welcome!"),
-        ))
-        hashed = self.api_call(query, call)
-        url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(requests.get(url).content)
-        if result:
-            return result
-        else:
-            raise
-
-    @classmethod
-    def join_url(cls, meeting_id, name, password):
-        call = 'join'
-        query = urllib.parse.urlencode((
-            ('fullName', name),
-            ('meetingID', meeting_id),
-            ('password', password),
-        ))
-        hashed = cls.api_call(query, call)
-        url = settings.BBB_API_URL + call + '?' + hashed
-        return url
+        return BigBlueButton().start(
+            name=self.name,
+            meeting_id=self.meeting_id,
+            attendee_password=self.attendee_password,
+            moderator_password=self.moderator_password
+        )
