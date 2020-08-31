@@ -72,3 +72,14 @@ class BBBTest(TestCase):
 
         b = BigBlueButton().join_url(meeting.meeting_id, 'reza torkaman ahmadi', meeting.attendee_password)
         print(b)
+        # It will print a link. join with it and see if it's ok or not!
+
+    def test_end_meeting(self):
+        meeting_name = 'test'
+        meeting_id = 'test'
+        meeting_welcome = 'test meeting welcome!'
+        meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome)
+
+        status = BigBlueButton().end_meeting('test', meeting.moderator_password)
+        print(status)
+

@@ -41,6 +41,7 @@ class BigBlueButton:
         ))
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
+        print(requests.get(url).content)
         result = parse_xml(requests.get(url).content)
         if result:
             pass
@@ -124,6 +125,7 @@ class BigBlueButton:
             ('moderatorPW', moderator_password),
             ('voiceBridge', voicebridge),
             ('welcome', welcome),
+            ('webcamsOnlyForModerator', 'true')
         ))
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
