@@ -1,5 +1,5 @@
 from django.http import (Http404, HttpResponseRedirect, HttpResponseNotFound,
-                        HttpResponse)
+                         HttpResponse)
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import login as django_login
@@ -11,6 +11,7 @@ import hashlib
 
 from bbb.models import Meeting
 
+
 def home_page(request):
     context = RequestContext(request, {
     })
@@ -19,7 +20,6 @@ def home_page(request):
 
 @login_required
 def begin_meeting(request):
-
     if request.method == "POST":
         begin_url = "http://bigbluebutton.org"
         return HttpResponseRedirect(begin_url)
@@ -29,10 +29,10 @@ def begin_meeting(request):
 
     return render_to_response('begin.html', context)
 
+
 @login_required
 def meetings(request):
-
-    #meetings = Meeting.objects.all()
+    # meetings = Meeting.objects.all()
     meetings = Meeting.get_meetings()
 
     context = RequestContext(request, {
@@ -40,6 +40,7 @@ def meetings(request):
     })
 
     return render_to_response('meetings.html', context)
+
 
 def join_meeting(request, meeting_id):
     form_class = Meeting.JoinForm
@@ -63,11 +64,12 @@ def join_meeting(request, meeting_id):
 
     return render_to_response('join.html', context)
 
+
 @login_required
 def delete_meeting(request, meeting_id, password):
     if request.method == "POST":
-        #meeting = Meeting.objects.filter(meeting_id=meeting_id)
-        #meeting.delete()
+        # meeting = Meeting.objects.filter(meeting_id=meeting_id)
+        # meeting.delete()
         Meeting.end_meeting(meeting_id, password)
 
         msg = 'Successfully ended meeting %s' % meeting_id
@@ -77,6 +79,7 @@ def delete_meeting(request, meeting_id, password):
         msg = 'Unable to end meeting %s' % meeting_id
         messages.error(request, msg)
         return HttpResponseRedirect(reverse('meetings'))
+
 
 @login_required
 def create_meeting(request):
@@ -89,7 +92,7 @@ def create_meeting(request):
             data = form.cleaned_data
             meeting = Meeting()
             meeting.name = data.get('name')
-            #password = hashlib.sha1(data.get('password')).hexdigest()
+            # password = hashlib.sha1(data.get('password')).hexdigest()
             meeting.attendee_password = data.get('attendee_password')
             meeting.moderator_password = data.get('moderator_password')
             meeting.meeting_id = data.get('meeting_id')

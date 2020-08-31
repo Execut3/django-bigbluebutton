@@ -1,12 +1,13 @@
+import urllib
+import random
 import requests
 
+from hashlib import sha1
 from django.db import models
 from django.conf import settings
 
-from urllib import urlencode
-from hashlib import sha1
+import django_jalali.db.models as jmodels
 import xml.etree.ElementTree as ET
-import random
 
 
 def parse(response):
@@ -22,10 +23,17 @@ def parse(response):
 
 
 class Meeting(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    """ This models hold information about each meeting room.
+    When creating a big blue button room with BBB APIs, will store
+    it's info here for later usages.
+    """
+    name = models.CharField(max_length=100)
     meeting_id = models.CharField(max_length=100, unique=True)
     attendee_password = models.CharField(max_length=50)
     moderator_password = models.CharField(max_length=50)
+
+    created_at = jmodels.jDateTimeField(auto_now_add=True)
+    updated_at = jmodels.jDateTimeField(auto_now=True)
 
     @classmethod
     def api_call(cls, query, call):
@@ -36,7 +44,7 @@ class Meeting(models.Model):
 
     def is_running(self):
         call = 'isMeetingRunning'
-        query = urlencode((
+        query = urllib.urlencode((
             ('meetingID', self.meeting_id),
         ))
         hashed = self.api_call(query, call)
@@ -50,7 +58,7 @@ class Meeting(models.Model):
     @classmethod
     def end_meeting(cls, meeting_id, password):
         call = 'end'
-        query = urlencode((
+        query = urllib.urlencode((
             ('meetingID', meeting_id),
             ('password', password),
         ))
@@ -65,7 +73,7 @@ class Meeting(models.Model):
     @classmethod
     def meeting_info(cls, meeting_id, password):
         call = 'getMeetingInfo'
-        query = urlencode((
+        query = urllib.urlencode((
             ('meetingID', meeting_id),
             ('password', password),
         ))
@@ -90,7 +98,7 @@ class Meeting(models.Model):
     @classmethod
     def get_meetings(cls):
         call = 'getMeetings'
-        query = urlencode((
+        query = urllib.urlencode((
             ('random', 'random'),
         ))
         hashed = cls.api_call(query, call)
@@ -119,7 +127,7 @@ class Meeting(models.Model):
     def start(self):
         call = 'create'
         voicebridge = 70000 + random.randint(0, 9999)
-        query = urlencode((
+        query = urllib.urlencode((
             ('name', self.name),
             ('meetingID', self.meeting_id),
             ('attendeePW', self.attendee_password),
@@ -138,7 +146,7 @@ class Meeting(models.Model):
     @classmethod
     def join_url(cls, meeting_id, name, password):
         call = 'join'
-        query = urlencode((
+        query = urllib.urlencode((
             ('fullName', name),
             ('meetingID', meeting_id),
             ('password', password),
