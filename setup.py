@@ -17,5 +17,6 @@ setup(
     license='GPT',
     install_requires=[
         'Django>=2.0',
+        'requests>=2.0'
     ]
 )

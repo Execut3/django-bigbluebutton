@@ -1,9 +1,8 @@
-from django.db import models
-from django import forms
-from django.conf import settings
-from django.core.urlresolvers import reverse
+import requests
 
-from urllib2 import urlopen
+from django.db import models
+from django.conf import settings
+
 from urllib import urlencode
 from hashlib import sha1
 import xml.etree.ElementTree as ET
@@ -29,7 +28,7 @@ class Meeting(models.Model):
     moderator_password = models.CharField(max_length=50)
 
     @classmethod
-    def api_call(self, query, call):
+    def api_call(cls, query, call):
         prepared = "%s%s%s" % (call, query, settings.SALT)
         checksum = sha1(prepared).hexdigest()
         result = "%s&checksum=%s" % (query, checksum)
@@ -42,37 +41,37 @@ class Meeting(models.Model):
         ))
         hashed = self.api_call(query, call)
         url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(urlopen(url).read())
+        result = parse(requests.get(url).content)
         if result:
             return result.find('running').text
         else:
             return 'error'
 
     @classmethod
-    def end_meeting(self, meeting_id, password):
+    def end_meeting(cls, meeting_id, password):
         call = 'end'
         query = urlencode((
             ('meetingID', meeting_id),
             ('password', password),
         ))
-        hashed = self.api_call(query, call)
+        hashed = cls.api_call(query, call)
         url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(urlopen(url).read())
+        result = parse(requests.get(url).content)
         if result:
             pass
         else:
             return 'error'
 
     @classmethod
-    def meeting_info(self, meeting_id, password):
+    def meeting_info(cls, meeting_id, password):
         call = 'getMeetingInfo'
         query = urlencode((
             ('meetingID', meeting_id),
             ('password', password),
         ))
-        hashed = self.api_call(query, call)
+        hashed = cls.api_call(query, call)
         url = settings.BBB_API_URL + call + '?' + hashed
-        r = parse(urlopen(url).read())
+        r = parse(requests.get(url).content)
         if r:
             # Create dict of values for easy use in template
             d = {
@@ -82,21 +81,21 @@ class Meeting(models.Model):
                 'moderator_count': r.find('moderatorCount').text,
                 'moderator_pw': r.find('moderatorPW').text,
                 'attendee_pw': r.find('attendeePW').text,
-                'invite_url': reverse('join', args=[meeting_id]),
+                # 'invite_url': reverse('join', args=[meeting_id]),
             }
             return d
         else:
             return None
 
     @classmethod
-    def get_meetings(self):
+    def get_meetings(cls):
         call = 'getMeetings'
         query = urlencode((
             ('random', 'random'),
         ))
-        hashed = self.api_call(query, call)
+        hashed = cls.api_call(query, call)
         url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(urlopen(url).read())
+        result = parse(requests.get(url).content)
         if result:
             # Create dict of values for easy use in template
             d = []
@@ -130,42 +129,20 @@ class Meeting(models.Model):
         ))
         hashed = self.api_call(query, call)
         url = settings.BBB_API_URL + call + '?' + hashed
-        result = parse(urlopen(url).read())
+        result = parse(requests.get(url).content)
         if result:
             return result
         else:
             raise
 
     @classmethod
-    def join_url(self, meeting_id, name, password):
+    def join_url(cls, meeting_id, name, password):
         call = 'join'
         query = urlencode((
             ('fullName', name),
             ('meetingID', meeting_id),
             ('password', password),
         ))
-        hashed = self.api_call(query, call)
+        hashed = cls.api_call(query, call)
         url = settings.BBB_API_URL + call + '?' + hashed
         return url
-
-    class CreateForm(forms.Form):
-        name = forms.SlugField()
-        attendee_password = forms.CharField(
-            widget=forms.PasswordInput(render_value=False))
-        moderator_password = forms.CharField(
-            widget=forms.PasswordInput(render_value=False))
-
-        def clean(self):
-            data = self.cleaned_data
-
-            # TODO: should check for errors before modifying
-            data['meeting_id'] = data.get('name')
-
-            if Meeting.objects.filter(name=data.get('name')):
-                raise forms.ValidationError("That meeting name is already in use")
-            return data
-
-    class JoinForm(forms.Form):
-        name = forms.CharField(label="Your name")
-        password = forms.CharField(
-            widget=forms.PasswordInput(render_value=False))

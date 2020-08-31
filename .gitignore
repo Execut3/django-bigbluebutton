@@ -25,6 +25,7 @@ Desktop.ini
 .hg
 .svn
 CVS
+django_bigbluebutton.egg-info/
 
 # Mac OS X Finder and whatnot
 .DS_Store
