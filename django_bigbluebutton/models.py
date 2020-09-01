@@ -27,12 +27,9 @@ class Meeting(models.Model):
     def __str__(self):
         return '{}-{}'.format(self.id, self.name)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.name:
             self.name = self.meeting_id
-
         super(Meeting, self).save()
 
     @property
@@ -48,6 +45,11 @@ class Meeting(models.Model):
             moderator_password=self.moderator_password
         )
 
+    def create_join_link(self, fullname, role='moderator'):
+        meeting = Meeting.create(self.name, self.meeting_id, self.welcome_text)
+        pw = self.moderator_password if role == 'moderator' else self.attendee_password
+        return BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
+
     @classmethod
     def create(cls, name, meeting_id, meeting_welcome='Welcome!'):
         m_xml = BigBlueButton().start(
@@ -55,6 +57,7 @@ class Meeting(models.Model):
             meeting_id=meeting_id,
             welcome=meeting_welcome
         )
+        print(m_xml)
         meeting_json = xml_to_json(m_xml)
         if meeting_json['returncode'] != 'SUCCESS':
             raise ValueError('Unable to create meeting!')

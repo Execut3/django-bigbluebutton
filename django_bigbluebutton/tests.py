@@ -63,16 +63,24 @@ class BBBTest(TestCase):
         m = Meeting.create(meeting_name, meeting_id, meeting_welcome)
         self.assertTrue(type(m) == Meeting)
 
-    def test_join_meeting(self):
+    def test_create_and_join_meeting(self):
         """ Will just call cls method in Meeting model. """
         meeting_name = 'test'
         meeting_id = 'test'
         meeting_welcome = 'test meeting welcome!'
         meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome)
 
-        b = BigBlueButton().join_url(meeting.meeting_id, 'reza torkaman ahmadi', meeting.attendee_password)
-        print(b)
+        b = BigBlueButton().join_url(meeting.meeting_id, 'Moderator of Class', meeting.moderator_password)
+        print('As moderator: {}'.format(b))
         # It will print a link. join with it and see if it's ok or not!
+
+        b = BigBlueButton().join_url(meeting.meeting_id, 'reza torkaman ahmadi', meeting.attendee_password)
+        print('As attendee: {}'.format(b))
+
+    def test_join_existing_meeting(self):
+        meeting_id = '179qta8488tusnljjciseir6cyhwtkhfvadhlveo'
+        b = BigBlueButton().join_url(meeting_id, 'Moderator of Class', BigBlueButton().attendee_password)
+        print(b)
 
     def test_end_meeting(self):
         meeting_name = 'test'
