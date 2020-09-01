@@ -25,7 +25,6 @@ Desktop.ini
 .hg
 .svn
 CVS
-django_bigbluebutton.egg-info/
 dist/
 
 # Mac OS X Finder and whatnot
