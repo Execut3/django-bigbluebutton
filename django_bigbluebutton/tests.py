@@ -78,8 +78,8 @@ class BBBTest(TestCase):
         print('As attendee: {}'.format(b))
 
     def test_join_existing_meeting(self):
-        meeting_id = '179qta8488tusnljjciseir6cyhwtkhfvadhlveo'
-        b = BigBlueButton().join_url(meeting_id, 'Moderator of Class', BigBlueButton().attendee_password)
+        meeting_id = 'ranxbqe6jfh1g53ymcnfr2p8elhcduoxsklwb2kr'
+        b = BigBlueButton().join_url(meeting_id, 'رضا ترکمان احمدی', 'dYHwpBBjlZoI')
         print(b)
 
     def test_end_meeting(self):

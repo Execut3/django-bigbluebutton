@@ -47,7 +47,7 @@ class Meeting(models.Model):
 
     def create_join_link(self, fullname, role='moderator'):
         meeting = Meeting.create(self.name, self.meeting_id, self.welcome_text)
-        pw = self.moderator_password if role == 'moderator' else self.attendee_password
+        pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
         return BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
 
     @classmethod
