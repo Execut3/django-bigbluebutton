@@ -20,6 +20,11 @@ class Meeting(models.Model):
     welcome_text = models.TextField(default='Welcome!')
     voice_bridge = models.CharField(max_length=50, null=True, blank=True)
 
+    is_running = models.BooleanField(
+        default=False,
+        help_text='Indicates whether this meeting is running in BigBlueButton or not!'
+    )
+
     # Time related Info
     created_at = jmodels.jDateTimeField(auto_now_add=True)
     updated_at = jmodels.jDateTimeField(auto_now=True)
@@ -32,9 +37,11 @@ class Meeting(models.Model):
             self.name = self.meeting_id
         super(Meeting, self).save()
 
-    @property
-    def is_running(self):
-        return BigBlueButton().is_running(self.meeting_id)
+    def check_is_running(self, commit=True):
+        self.is_running = BigBlueButton().is_running(self.meeting_id)
+        if commit:
+            self.save()
+        return self.is_running
 
     def start(self):
         """ Will start already created meeting again. """
