@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: django-bigbluebutton
-Version: 0.0.8
+Version: 0.0.9
 Summary: A Django integration APP to connect django projects to Big Blue Button ;)
 Home-page: https://github.com/Execut3/django-bigbluebutton
 Author: Execut3
@@ -24,14 +24,14 @@ Description: # django-bigbluebutton
         used with minor changes in structure.
         
         install using pip:
-        ```
-        $ pip install django-bigbluebutton
+        ```bash
+        pip install django-bigbluebutton
         ```
         
         ### Usage
         Register app in `settings.py`
         
-        ```
+        ```python
         INSTALLED_APPS = [
             "django_bigbluebutton",
         ]
@@ -39,22 +39,23 @@ Description: # django-bigbluebutton
         
         Now should define you Big Blue Button Server core configs in `settings.py`:
         
-        ```
+        ```python
         BBB_API_URL = 'https://test.com/bigbluebutton/api/'
         BBB_SECRET_KEY = 'abcdefgabcdefgabcdefgabcdefgabcdefg'
         ```
         
         Next apply migrations:
-        ```
+        ```bash
         python manage.py migrate
         ```
         
         And finally run test:
         
-        ```
+        ```bash
         python manage.py test
         ```
         
         You can follow `tests.py` file to see how to use this package.
+        
 Platform: UNKNOWN
 Description-Content-Type: text/markdown

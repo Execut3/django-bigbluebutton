@@ -35,6 +35,9 @@ class MeetingAdmin(admin.ModelAdmin):
         And will redirect to join link. """
         meeting = self.get_object(request, meeting_id)
         link = meeting.create_join_link('Administrator', 'moderator')
+        if not meeting.is_running:
+            meeting.is_running = True
+            meeting.save()
         return HttpResponseRedirect(link)
 
     def end_meeting_action(self, request, meeting_id, *args, **kwargs):
@@ -42,7 +45,7 @@ class MeetingAdmin(admin.ModelAdmin):
         and then will update Meeting obj is_running status from local database"""
         meeting = self.get_object(request, meeting_id)
         ended = meeting.end()
-        if ended == True:
+        if ended:
             self.message_user(request, 'Success')
         else:
             self.message_user(request, 'Unable to close meeting', level=40)

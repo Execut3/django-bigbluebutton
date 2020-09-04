@@ -53,13 +53,19 @@ class Meeting(models.Model):
         )
 
     def end(self):
+        # If successfully ended, will return True
         ended = BigBlueButton().end_meeting(self.meeting_id, self.moderator_password)
-        return ended    # If successfully ended, will return True
+        ended = True if ended == True else False
+        if ended:
+            self.is_running = False
+            self.save()
+        return ended
 
     def create_join_link(self, fullname, role='moderator'):
         meeting = Meeting.create(self.name, self.meeting_id, self.welcome_text)
         pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
-        return BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
+        link = BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
+        return link
 
     @classmethod
     def create(cls, name, meeting_id, meeting_welcome='Welcome!'):
@@ -82,6 +88,7 @@ class Meeting(models.Model):
         meeting.internal_meeting_id = meeting_json['internalMeetingID']
         meeting.parent_meeting_id = meeting_json['parentMeetingID']
         meeting.voice_bridge = meeting_json['voiceBridge']
+        meeting.is_running = True
         meeting.save()
 
         return meeting

@@ -6,7 +6,7 @@ README = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name='django-bigbluebutton',
-    version='0.0.8',
+    version='0.0.9',
     packages=['django_bigbluebutton'],
     description='A Django integration APP to connect django projects to Big Blue Button ;)',
     long_description=README,
@@ -21,5 +21,6 @@ setup(
     ],
     package_data={
         'django_bigbluebutton': ['migrations/*'],
+
     },
 )
