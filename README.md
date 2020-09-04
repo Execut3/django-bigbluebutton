@@ -16,14 +16,14 @@ requests>=2.0
 used with minor changes in structure.
 
 install using pip:
-```
-$ pip install django-bigbluebutton
+```bash
+pip install django-bigbluebutton
 ```
 
 ### Usage
 Register app in `settings.py`
 
-```
+```python
 INSTALLED_APPS = [
     "django_bigbluebutton",
 ]
@@ -31,19 +31,19 @@ INSTALLED_APPS = [
 
 Now should define you Big Blue Button Server core configs in `settings.py`:
 
-```
+```python
 BBB_API_URL = 'https://test.com/bigbluebutton/api/'
 BBB_SECRET_KEY = 'abcdefgabcdefgabcdefgabcdefgabcdefg'
 ```
 
 Next apply migrations:
-```
+```bash
 python manage.py migrate
 ```
 
 And finally run test:
 
-```
+```bash
 python manage.py test
 ```
 
