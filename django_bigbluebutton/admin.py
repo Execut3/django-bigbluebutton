@@ -5,9 +5,9 @@ from django.urls import reverse, re_path, path
 
 from django.utils.html import format_html
 
-from .bbb import BigBlueButton
 from .models import Meeting
 from .forms import MeetingCreateLinkForm
+from .settings import UPDATE_RUNNING_ON_EACH_CALL
 
 
 @admin.register(Meeting)
@@ -18,10 +18,18 @@ class MeetingAdmin(admin.ModelAdmin):
         'id', 'name', 'meeting_id', 'created_at',
         'is_running', 'meeting_actions'
     )
-    actions = ["refresh_meetings_running_status"]
+    actions = ["update_running_meetings"] if not UPDATE_RUNNING_ON_EACH_CALL else []
     list_per_page = 30
 
-    def meeting_join(self, request, meeting_id, *args, **kwargs):
+    def get_queryset(self, request):
+        qs = super(MeetingAdmin, self).get_queryset(request)
+        # If settings.UPDATE_RUNNING_ON_EACH_CALL, then on each call
+        # For queryset, call getMeetings and update status of meetings
+        if UPDATE_RUNNING_ON_EACH_CALL:
+            Meeting.update_running_meetings()
+        return qs
+
+    def join_meeting_action(self, request, meeting_id, *args, **kwargs):
         """ Will try to call join API of bigbluebutton and
         get a join link to meeting with provided meeting_id.
         And will redirect to join link. """
@@ -29,7 +37,18 @@ class MeetingAdmin(admin.ModelAdmin):
         link = meeting.create_join_link('Administrator', 'moderator')
         return HttpResponseRedirect(link)
 
-    def create_meeting_link(self, request, meeting_id, *args, **kwargs):
+    def end_meeting_action(self, request, meeting_id, *args, **kwargs):
+        """ Will call end() method from bigbluebutton,
+        and then will update Meeting obj is_running status from local database"""
+        meeting = self.get_object(request, meeting_id)
+        ended = meeting.end()
+        if ended == True:
+            self.message_user(request, 'Success')
+        else:
+            self.message_user(request, 'Unable to close meeting', level=40)
+        return HttpResponseRedirect(reverse('admin:django_bigbluebutton_meeting_changelist'))
+
+    def create_meeting_link_action(self, request, meeting_id, *args, **kwargs):
         """ Will create meeting with meeting_id if not exist,
         Will join as moderator access. This method is for fast
         join to a meeting as admin.
@@ -50,7 +69,7 @@ class MeetingAdmin(admin.ModelAdmin):
                 context['link'] = form.create_link(meeting)
             else:
                 print('error not is_valid()')
-                self.message_user(request, 'Success')
+                self.message_user(request, 'Error')
                 url = reverse(
                     'admin:meeting-create-link',
                     args=[meeting.pk],
@@ -74,15 +93,20 @@ class MeetingAdmin(admin.ModelAdmin):
         custom_urls = [
             re_path(
                 r'^(?P<meeting_id>.+)/join/$',
-                self.admin_site.admin_view(self.meeting_join),
+                self.admin_site.admin_view(self.join_meeting_action),
                 name='meeting-join',
             ),
             re_path(
+                r'^(?P<meeting_id>.+)/end/$',
+                self.admin_site.admin_view(self.end_meeting_action),
+                name='meeting-end',
+            ),
+            re_path(
                 r'^(?P<meeting_id>.+)/create-link/$',
-                self.admin_site.admin_view(self.create_meeting_link),
+                self.admin_site.admin_view(self.create_meeting_link_action),
                 name='meeting-create-link',
             ),
-            path('refresh-meetings/', self.refresh_meetings_running_status),
+            path('refresh-meetings/', self.update_running_meetings),
         ]
         return custom_urls + urls
 
@@ -92,19 +116,42 @@ class MeetingAdmin(admin.ModelAdmin):
         - Join Now: Which will call url 'admin:meeting-join'
         - Create Join Link: Which will cal url 'admin:meeting-create-link'
         """
+
+        create_join_link_href = '<a class="button"' \
+                                'title="Will create meeting if not started yet, ' \
+                                'and join to it as Administrator" href="{}">Create join link</a>'.format(
+                                    reverse('admin:meeting-create-link', args=[obj.pk])
+                                )
+        start_meeting_href = '<a class="button" href="{}" style="background: green" ' \
+                             'target="_blank">Start Now</a>&nbsp;'.format(
+                                 reverse('admin:meeting-join', args=[obj.pk])
+                             )
+        end_meeting_href = '<a class="button" style="background: red" href="{}">End meeting</a>'.format(
+                               reverse('admin:meeting-end', args=[obj.pk])
+                           )
         return format_html(
-            '<a class="button" href="{}">Join Now</a>&nbsp;'
-            '<a class="button" href="{}">Create Join link</a>&nbsp;',
-            reverse('admin:meeting-join', args=[obj.pk]),
-            reverse('admin:meeting-create-link', args=[obj.pk]),
+            '{}&nbsp;{}'.format(
+                create_join_link_href,
+                start_meeting_href if not obj.is_running else end_meeting_href
+            )
         )
 
     meeting_actions.short_description = 'Actions'
     meeting_actions.allow_tags = True
 
-    def refresh_meetings_running_status(self, request):
-        running_meetings = BigBlueButton().get_meetings()
-        print(running_meetings)
-        return HttpResponseRedirect("../")
+    def changelist_view(self, request, extra_context=None):
+        if 'action' in request.POST and request.POST['action'] == 'update_running_meetings':
+            if not request.POST.getlist(admin.ACTION_CHECKBOX_NAME):
+                post = request.POST.copy()
+                for u in self.model.objects.all():
+                    post.update({admin.ACTION_CHECKBOX_NAME: str(u.id)})
+                request._set_post(post)
+        return super(MeetingAdmin, self).changelist_view(request, extra_context)
 
-    refresh_meetings_running_status.short_description = "Refresh Meetings"
+    def update_running_meetings(self, request, *args, **kwargs):
+        """ Will get list of running meetings from bigbluebutton,
+        And update states of Meetings objects in database. """
+        Meeting.update_running_meetings()
+        return HttpResponseRedirect(".")
+
+    update_running_meetings.short_description = "Refresh Meetings"

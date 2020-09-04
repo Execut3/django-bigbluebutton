@@ -52,6 +52,10 @@ class Meeting(models.Model):
             moderator_password=self.moderator_password
         )
 
+    def end(self):
+        ended = BigBlueButton().end_meeting(self.meeting_id, self.moderator_password)
+        return ended    # If successfully ended, will return True
+
     def create_join_link(self, fullname, role='moderator'):
         meeting = Meeting.create(self.name, self.meeting_id, self.welcome_text)
         pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
@@ -81,3 +85,29 @@ class Meeting(models.Model):
         meeting.save()
 
         return meeting
+
+    @classmethod
+    def update_running_meetings(cls):
+        """ This method will call bigbluebutton,
+        fetch running meetings on bbb, and update local
+        database with running meetings info. """
+        running_meetings = BigBlueButton().get_meetings()
+        print(running_meetings)
+
+        """ A sample response from bigbluebutton.getMeeting():
+        [
+            {
+                'name': 'meeting-10', 'running': 'true', 
+                'moderator_pw': 'mp', 'attendee_pw': 'ap', 
+                'info': {
+                    'start_time': '1599199672948', 'end_time': '0', 
+                    'participant_count': '1', 'moderator_count': '1',
+                     'moderator_pw': 'mp', 'attendee_pw': 'ap'
+                }
+            }
+        ]
+        """
+
+        meetings_id_list = [item['name'] for item in running_meetings]
+        Meeting.objects.all().update(is_running=False)
+        Meeting.objects.filter(meeting_id__in=meetings_id_list).update(is_running=True)
