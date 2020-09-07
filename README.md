@@ -48,3 +48,19 @@ python manage.py test
 ```
 
 You can follow `tests.py` file to see how to use this package.
+
+### Admin Integration
+
+By installing this app in your django project, A admin section will be added named `Meeting`.
+Under this section you can see list of open meetings, join meeting, create join link for other
+users with moderator or attendee permissions.
+
+Also to enable update state of each meeting (sync with bigbluebutton) set below variable in 
+`settings.py`:
+
+```python
+UPDATE_RUNNING_ON_EACH_CALL = True
+```
+
+So whenever you open list of meetings in django admin, it will update state of all meetings in database
+with result of `getMeetings` API from bigbluebutton.
