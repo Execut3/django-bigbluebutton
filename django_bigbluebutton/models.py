@@ -1,5 +1,6 @@
 import django_jalali.db.models as jmodels
 from django.db import models
+from django.utils.translation import ugettext as _
 
 from .bbb import BigBlueButton
 from .utils import xml_to_json
@@ -11,18 +12,89 @@ class Meeting(models.Model):
         When creating a big blue button room with BBB APIs,
         Will store it's info here for later usages.
     """
-    name = models.CharField(max_length=100)
-    meeting_id = models.CharField(max_length=100, unique=True)
-    attendee_password = models.CharField(max_length=50)
-    moderator_password = models.CharField(max_length=50)
-    parent_meeting_id = models.CharField(null=True, blank=True, max_length=100)
-    internal_meeting_id = models.CharField(null=True, blank=True, max_length=100)
-    welcome_text = models.TextField(default='Welcome!')
-    voice_bridge = models.CharField(max_length=50, null=True, blank=True)
-
+    name = models.CharField(max_length=100, verbose_name=_('Name of Meeting'))
+    meeting_id = models.CharField(max_length=100, unique=True, verbose_name=_('Meeting ID'))
+    attendee_password = models.CharField(max_length=50, verbose_name=_('Attendee Password'))
+    moderator_password = models.CharField(max_length=50, verbose_name=_('Moderator Password'))
     is_running = models.BooleanField(
         default=False,
+        verbose_name=_('Is running'),
         help_text='Indicates whether this meeting is running in BigBlueButton or not!'
+    )
+
+    # Configs
+    max_participants = models.IntegerField(default=10, verbose_name=_('Max Participants'))
+    welcome_text = models.TextField(
+        default='Welcome!',
+        verbose_name=_('Meeting Text in Bigbluebutton')
+    )
+    logout_url = models.CharField(
+        max_length=200,
+        default='', null=True, blank=True,
+        verbose_name=_('URL to visit after user logged out')
+    )
+    record = models.BooleanField(default=True, verbose_name=_('Record'))
+    auto_start_recording = models.BooleanField(default=True, verbose_name=_('Auto Start Recording'))
+    allow_start_stop_recording = models.BooleanField(
+        default=True,
+        verbose_name=_('Allow Stop/Start Recording'),
+        help_text=_('Allow the user to start/stop recording. (default true)')
+    )
+    webcam_only_for_moderators = models.BooleanField(
+        default=False,
+        verbose_name=_('Webcam Only for moderators?'),
+        help_text=_('will cause all webcams shared by viewers during this meeting to only appear for moderators')
+    )
+
+    # Lock settings
+    lock_settings_disable_cam = models.BooleanField(
+        default=False,
+        verbose_name=_('Disable Camera'),
+        help_text=_('will prevent users from sharing their camera in the meeting')
+    )
+    lock_settings_disable_mic = models.BooleanField(
+        default=False,
+        verbose_name=_('Disable Mic'),
+        help_text=_('will only allow user to join listen only')
+    )
+    lock_settings_disable_private_chat = models.BooleanField(
+        default=False,
+        verbose_name=_('Disable Private chat'),
+        help_text=_('if True will disable private chats in the meeting')
+    )
+    lock_settings_disable_public_chat = models.BooleanField(
+        default=False,
+        verbose_name=_('Disable public chat'),
+        help_text=_('if True will disable public chat in the meeting')
+    )
+    lock_settings_disable_note = models.BooleanField(
+        default=False,
+        verbose_name=_('Disable Note'),
+        help_text=_('if True will disable notes in the meeting.')
+    )
+    lock_settings_locked_layout = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked Layout'),
+        help_text=_('will lock the layout in the meeting. ')
+    )
+
+    # Not important Info
+    parent_meeting_id = models.CharField(
+        null=True,
+        blank=True,
+        max_length=100,
+        verbose_name=_('Parent Meeting ID')
+    )
+    internal_meeting_id = models.CharField(
+        null=True,
+        blank=True,
+        max_length=100,
+        verbose_name=_('Internal Meeting ID')
+    )
+    voice_bridge = models.CharField(
+        max_length=50,
+        null=True, blank=True,
+        verbose_name=_('Voice Bridge')
     )
 
     # Time related Info
@@ -61,18 +133,18 @@ class Meeting(models.Model):
             self.save()
         return ended
 
-    def create_join_link(self, fullname, role='moderator'):
-        meeting = Meeting.create(self.name, self.meeting_id, self.welcome_text)
+    def create_join_link(self, fullname, role='moderator', **kwargs):
+        meeting = Meeting.create(self.name, self.meeting_id, meetign_welcome=self.welcome_text, **kwargs)
         pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
         link = BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
         return link
 
     @classmethod
-    def create(cls, name, meeting_id, meeting_welcome='Welcome!'):
+    def create(cls, name, meeting_id, **kwargs):
         m_xml = BigBlueButton().start(
             name=name,
             meeting_id=meeting_id,
-            welcome=meeting_welcome
+            **kwargs
         )
         print(m_xml)
         meeting_json = xml_to_json(m_xml)
@@ -88,6 +160,10 @@ class Meeting(models.Model):
         meeting.internal_meeting_id = meeting_json['internalMeetingID']
         meeting.parent_meeting_id = meeting_json['parentMeetingID']
         meeting.voice_bridge = meeting_json['voiceBridge']
+        meeting.logout_url = kwargs.get('logout_url', '')
+        meeting.record = kwargs.get('record', True)
+        meeting.auto_start_recording = kwargs.get('auto_start_recording', True)
+        meeting.allow_start_stop_recording = kwargs.get('allow_start_stop_recording', True)
         meeting.is_running = True
         meeting.save()
 

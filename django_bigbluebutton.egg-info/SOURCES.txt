@@ -5,6 +5,7 @@ readme.rst
 setup.py
 django_bigbluebutton/__init__.py
 django_bigbluebutton/admin.py
+django_bigbluebutton/apps.py
 django_bigbluebutton/bbb.py
 django_bigbluebutton/forms.py
 django_bigbluebutton/models.py
@@ -12,7 +13,6 @@ django_bigbluebutton/settings.py
 django_bigbluebutton/tests.py
 django_bigbluebutton/urls.py
 django_bigbluebutton/utils.py
-django_bigbluebutton/views.py
 django_bigbluebutton.egg-info/PKG-INFO
 django_bigbluebutton.egg-info/SOURCES.txt
 django_bigbluebutton.egg-info/dependency_links.txt
@@ -22,5 +22,7 @@ django_bigbluebutton/migrations/0001_initial.py
 django_bigbluebutton/migrations/0002_auto_20200831_1635.py
 django_bigbluebutton/migrations/0003_auto_20200831_1644.py
 django_bigbluebutton/migrations/0004_meeting_is_running.py
+django_bigbluebutton/migrations/0005_auto_20200911_0547.py
+django_bigbluebutton/migrations/0006_auto_20200911_0622.py
 django_bigbluebutton/migrations/__init__.py
 django_bigbluebutton/templates/admin/meeting_create_link.html

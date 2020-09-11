@@ -3,8 +3,8 @@ import random
 import requests
 
 from hashlib import sha1
-from django.conf import settings
 
+from . import settings
 from .utils import parse_xml
 
 
@@ -34,6 +34,7 @@ class BigBlueButton:
             return 'error'
 
     def end_meeting(self, meeting_id, password):
+        print(password)
         call = 'end'
         query = urllib.parse.urlencode((
             ('meetingID', meeting_id),
@@ -41,7 +42,9 @@ class BigBlueButton:
         ))
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
-        result = parse_xml(requests.get(url).content)
+        req = requests.get(url)
+        print(req.content)
+        result = parse_xml(req.content)
         if result:
             return True
         else:
@@ -110,21 +113,35 @@ class BigBlueButton:
         url = self.api_url + call + '?' + hashed
         return url
 
-    def start(self, name, meeting_id, attendee_password='', moderator_password='', welcome='Welcome!'):
+    def start(self, name, meeting_id, attendee_password='', moderator_password='', **kwargs):
         call = 'create'
         if not attendee_password:
             attendee_password = self.attendee_password
         if not moderator_password:
             moderator_password = self.moderator_password
-        voicebridge = 70000 + random.randint(0, 9999)
+
+        # Get extra configs or set default values
+        welcome = kwargs.get('meeting_welcome', 'Welcome!')
+        record = kwargs.get('record', settings.BBB_RECORD)
+        auto_start_recording = kwargs.get('auto_start_recording', settings.BBB_AUTO_RECORDING)
+        allow_start_stop_recording = kwargs.get('allow_start_stop_recording', settings.BBB_ALLOW_START_STOP_RECORDING)
+        logout_url = kwargs.get('logout_url', settings.BBB_LOGOUT_URL)
+        webcam_only_for_moderators = kwargs.get('webcam_only_for_moderators', settings.BBB_WEBCAM_ONLY_FOR_MODS)
+        voice_bridge = 70000 + random.randint(0, 9999)
+
+        # Making the query string
         query = urllib.parse.urlencode((
             ('name', name),
             ('meetingID', meeting_id),
             ('attendeePW', attendee_password),
             ('moderatorPW', moderator_password),
-            ('voiceBridge', voicebridge),
+            ('record', record),
             ('welcome', welcome),
-            ('webcamsOnlyForModerator', 'true')
+            ('logoutUrl', logout_url),
+            ('voiceBridge', voice_bridge),
+            ('autoStartRecording', auto_start_recording),
+            ('allowStartStopRecording', allow_start_stop_recording),
+            ('webcamsOnlyForModerator', webcam_only_for_moderators),
         ))
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
