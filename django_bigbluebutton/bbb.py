@@ -113,12 +113,10 @@ class BigBlueButton:
         url = self.api_url + call + '?' + hashed
         return url
 
-    def start(self, name, meeting_id, attendee_password='', moderator_password='', **kwargs):
+    def start(self, name, meeting_id, **kwargs):
         call = 'create'
-        if not attendee_password:
-            attendee_password = self.attendee_password
-        if not moderator_password:
-            moderator_password = self.moderator_password
+        attendee_password = kwargs.get("attendee_password", self.attendee_password)
+        moderator_password = kwargs.get("moderator_password", self.moderator_password)
 
         # Get extra configs or set default values
         welcome = kwargs.get('meeting_welcome', 'Welcome!')

@@ -1,4 +1,5 @@
 import django_jalali.db.models as jmodels
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 
@@ -134,13 +135,25 @@ class Meeting(models.Model):
         return ended
 
     def create_join_link(self, fullname, role='moderator', **kwargs):
-        meeting = Meeting.create(self.name, self.meeting_id, meetign_welcome=self.welcome_text, **kwargs)
+        meeting = Meeting.create(
+            self.name, self.meeting_id,
+            meetign_welcome=self.welcome_text,
+            attendee_password=self.attendee_password,
+            moderator_password=self.moderator_password,
+            **kwargs)
         pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
         link = BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
         return link
 
     @classmethod
-    def create(cls, name, meeting_id, **kwargs):
+    def create(cls, name, meeting_id,  **kwargs):
+        kwargs.update({
+            'record': kwargs.get('record', settings.BBB_RECORD),
+            'auto_start_recording': kwargs.get('auto_start_recording', settings.BBB_AUTO_RECORDING),
+            'allow_start_stop_recording': kwargs.get('allow_start_stop_recording', settings.BBB_ALLOW_START_STOP_RECORDING),
+            'logout_url': kwargs.get('logout_url', settings.BBB_LOGOUT_URL)
+        })
+
         m_xml = BigBlueButton().start(
             name=name,
             meeting_id=meeting_id,

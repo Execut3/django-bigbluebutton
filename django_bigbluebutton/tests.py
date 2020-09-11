@@ -60,7 +60,7 @@ class BBBTest(TestCase):
         meeting_name = 'test2'
         meeting_id = 'test2'
         meeting_welcome = 'test meeting welcome!'
-        m = Meeting.create(meeting_name, meeting_id, meeting_welcome)
+        m = Meeting.create(meeting_name, meeting_id, meeting_welcome=meeting_welcome)
         self.assertTrue(type(m) == Meeting)
 
     def test_create_and_join_meeting(self):
@@ -68,7 +68,7 @@ class BBBTest(TestCase):
         meeting_name = 'test'
         meeting_id = 'test'
         meeting_welcome = 'test meeting welcome!'
-        meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome)
+        meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome=meeting_welcome)
 
         b = BigBlueButton().join_url(meeting.meeting_id, 'Moderator of Class', meeting.moderator_password)
         print('As moderator: {}'.format(b))
@@ -86,7 +86,7 @@ class BBBTest(TestCase):
         meeting_name = 'test'
         meeting_id = 'test'
         meeting_welcome = 'test meeting welcome!'
-        meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome)
+        meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome=meeting_welcome)
 
         status = BigBlueButton().end_meeting('test', meeting.moderator_password)
         print(status)
