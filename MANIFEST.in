@@ -3,3 +3,4 @@ recursive-include django_bigbluebutton *.ico *.png *.css *.gif *.jpg *.txt *.js 
 include LICENSE
 include README.rst
 recursive-include django_bigbluebutton/migrations *.py
+recursive-include django_bigbluebutton/template *.html
