@@ -1,8 +1,8 @@
 import django_jalali.db.models as jmodels
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from .settings import *
 from .bbb import BigBlueButton
 from .utils import xml_to_json
 
@@ -148,10 +148,10 @@ class Meeting(models.Model):
     @classmethod
     def create(cls, name, meeting_id,  **kwargs):
         kwargs.update({
-            'record': kwargs.get('record', settings.BBB_RECORD),
-            'auto_start_recording': kwargs.get('auto_start_recording', settings.BBB_AUTO_RECORDING),
-            'allow_start_stop_recording': kwargs.get('allow_start_stop_recording', settings.BBB_ALLOW_START_STOP_RECORDING),
-            'logout_url': kwargs.get('logout_url', settings.BBB_LOGOUT_URL)
+            'record': kwargs.get('record', BBB_RECORD),
+            'auto_start_recording': kwargs.get('auto_start_recording', BBB_AUTO_RECORDING),
+            'allow_start_stop_recording': kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING),
+            'logout_url': kwargs.get('logout_url', BBB_LOGOUT_URL)
         })
 
         m_xml = BigBlueButton().start(

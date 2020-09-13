@@ -4,8 +4,8 @@ import requests
 
 from hashlib import sha1
 
-from . import settings
 from .utils import parse_xml
+from .settings import *
 
 
 class BigBlueButton:
@@ -120,11 +120,11 @@ class BigBlueButton:
 
         # Get extra configs or set default values
         welcome = kwargs.get('meeting_welcome', 'Welcome!')
-        record = kwargs.get('record', settings.BBB_RECORD)
-        auto_start_recording = kwargs.get('auto_start_recording', settings.BBB_AUTO_RECORDING)
-        allow_start_stop_recording = kwargs.get('allow_start_stop_recording', settings.BBB_ALLOW_START_STOP_RECORDING)
-        logout_url = kwargs.get('logout_url', settings.BBB_LOGOUT_URL)
-        webcam_only_for_moderators = kwargs.get('webcam_only_for_moderators', settings.BBB_WEBCAM_ONLY_FOR_MODS)
+        record = kwargs.get('record', BBB_RECORD)
+        auto_start_recording = kwargs.get('auto_start_recording', BBB_AUTO_RECORDING)
+        allow_start_stop_recording = kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING)
+        logout_url = kwargs.get('logout_url', BBB_LOGOUT_URL)
+        webcam_only_for_moderators = kwargs.get('webcam_only_for_moderators', BBB_WEBCAM_ONLY_FOR_MODS)
         voice_bridge = 70000 + random.randint(0, 9999)
 
         # Making the query string
