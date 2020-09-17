@@ -1,6 +1,7 @@
 include *.txt *.ini *.cfg *.rst
 recursive-include django_bigbluebutton *.ico *.png *.css *.gif *.jpg *.txt *.js *.html *.xml
 include LICENSE
-include README.rst
+include README.md
 recursive-include django_bigbluebutton/migrations *.py
 recursive-include django_bigbluebutton/templates *
+recursive-include django_bigbluebutton/locale *

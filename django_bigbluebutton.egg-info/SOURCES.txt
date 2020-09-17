@@ -1,7 +1,6 @@
 LICENSE
 MANIFEST.in
 README.md
-readme.rst
 setup.py
 django_bigbluebutton/__init__.py
 django_bigbluebutton/admin.py
@@ -18,6 +17,8 @@ django_bigbluebutton.egg-info/SOURCES.txt
 django_bigbluebutton.egg-info/dependency_links.txt
 django_bigbluebutton.egg-info/requires.txt
 django_bigbluebutton.egg-info/top_level.txt
+django_bigbluebutton/locale/fa/LC_MESSAGES/django.mo
+django_bigbluebutton/locale/fa/LC_MESSAGES/django.po
 django_bigbluebutton/migrations/0001_initial.py
 django_bigbluebutton/migrations/0002_auto_20200831_1635.py
 django_bigbluebutton/migrations/0003_auto_20200831_1644.py
