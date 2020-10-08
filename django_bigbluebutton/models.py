@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from django.utils.translation import ugettext as _
 
@@ -203,6 +205,9 @@ class Meeting(models.Model):
         ]
         """
 
-        meetings_id_list = [item['name'] for item in running_meetings]
-        Meeting.objects.all().update(is_running=False)
-        Meeting.objects.filter(meeting_id__in=meetings_id_list).update(is_running=True)
+        try:
+            meetings_id_list = [item['name'] for item in running_meetings]
+            Meeting.objects.all().update(is_running=False)
+            Meeting.objects.filter(meeting_id__in=meetings_id_list).update(is_running=True)
+        except Exception as e:
+            logging.error('[-] Exception in update_running_meetings, {}'.format(str(e)))
