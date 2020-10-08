@@ -1,4 +1,3 @@
-import django_jalali.db.models as jmodels
 from django.db import models
 from django.utils.translation import ugettext as _
 
@@ -99,8 +98,8 @@ class Meeting(models.Model):
     )
 
     # Time related Info
-    created_at = jmodels.jDateTimeField(auto_now_add=True)
-    updated_at = jmodels.jDateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{}-{}'.format(self.id, self.name)
