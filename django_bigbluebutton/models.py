@@ -189,7 +189,6 @@ class Meeting(models.Model):
         fetch running meetings on bbb, and update local
         database with running meetings info. """
         running_meetings = BigBlueButton().get_meetings()
-        print(running_meetings)
 
         """ A sample response from bigbluebutton.getMeeting():
         [
