@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from .settings import *
 from .bbb import BigBlueButton
@@ -106,6 +106,11 @@ class Meeting(models.Model):
     def __str__(self):
         return '{}-{}'.format(self.id, self.name)
 
+    class Meta:
+        db_table = 'meeting'
+        verbose_name = 'Meeting'
+        verbose_name_plural = _('Meeting')
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.name:
             self.name = self.meeting_id
@@ -133,6 +138,10 @@ class Meeting(models.Model):
         if ended:
             self.is_running = False
             self.save()
+
+            # Now send a signal so other apps also be notified
+            from .signals import meeting_ended
+            meeting_ended.send(sender=self)
         return ended
 
     def create_join_link(self, fullname, role='moderator', **kwargs):
@@ -205,8 +214,13 @@ class Meeting(models.Model):
         """
 
         try:
+            # First get list of running meetings from bbb
             meetings_id_list = [item['name'] for item in running_meetings]
+
+            # Now update all to not running
             Meeting.objects.all().update(is_running=False)
+
+            # Find meetings with proper id_list running, and update their model status to running
             Meeting.objects.filter(meeting_id__in=meetings_id_list).update(is_running=True)
         except Exception as e:
             logging.error('[-] Exception in update_running_meetings, {}'.format(str(e)))

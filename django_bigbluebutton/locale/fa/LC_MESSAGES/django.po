@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-17 07:47+0430\n"
+"POT-Creation-Date: 2020-11-12 10:24+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,120 +18,128 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: models.py:16
+#: django_bigbluebutton/models.py:17
 msgid "Name of Meeting"
 msgstr "نام ملاقات"
 
-#: models.py:17
+#: django_bigbluebutton/models.py:18
 msgid "Meeting ID"
 msgstr "شناسه جلسه"
 
-#: models.py:18
+#: django_bigbluebutton/models.py:19
 msgid "Attendee Password"
 msgstr "پسورد شرکت کننده"
 
-#: models.py:19
+#: django_bigbluebutton/models.py:20
 msgid "Moderator Password"
 msgstr "پسورد مجری/مدرس"
 
-#: models.py:22
+#: django_bigbluebutton/models.py:23
 msgid "Is running"
 msgstr "در حال اجرا"
 
-#: models.py:27
+#: django_bigbluebutton/models.py:28
 msgid "Max Participants"
 msgstr "بیشترین تعداد شرکت‌کنندگان"
 
-#: models.py:30
+#: django_bigbluebutton/models.py:31
 msgid "Meeting Text in Bigbluebutton"
 msgstr ""
 
-#: models.py:35
+#: django_bigbluebutton/models.py:36
 msgid "URL to visit after user logged out"
 msgstr "آدرس وب برای هدایت کاربران پس از خروج از ملاقات"
 
-#: models.py:37
+#: django_bigbluebutton/models.py:38
 msgid "Record"
 msgstr "ضبط کردن"
 
-#: models.py:38
+#: django_bigbluebutton/models.py:39
 msgid "Auto Start Recording"
 msgstr "فعال‌سازی ضبط به صورت اتوماتیک"
 
-#: models.py:41
+#: django_bigbluebutton/models.py:42
 msgid "Allow Stop/Start Recording"
 msgstr "اجازه دادن برای توقف/اجرای ضبط کردن"
 
-#: models.py:42
+#: django_bigbluebutton/models.py:43
 msgid "Allow the user to start/stop recording. (default true)"
-msgstr "به کاربر اجازه داده شود تا بتواند ضبط کردن را متوقف یا شروع کن (پیش‌فرض بله است)"
+msgstr ""
+"به کاربر اجازه داده شود تا بتواند ضبط کردن را متوقف یا شروع کن (پیش‌فرض بله "
+"است)"
 
-#: models.py:46
+#: django_bigbluebutton/models.py:47
 msgid "Webcam Only for moderators?"
 msgstr "وب‌کم فقط برای مجری و مدرس‌ها فعال باشد."
 
-#: models.py:47
+#: django_bigbluebutton/models.py:48
 msgid ""
 "will cause all webcams shared by viewers during this meeting to only appear "
 "for moderators"
-msgstr "در این حالت دوربین اشتراک گذاشته شده توسط شرکت‌کنندگان توسط تنها مجری‌ها قابل مشاهده باشد."
+msgstr ""
+"در این حالت دوربین اشتراک گذاشته شده توسط شرکت‌کنندگان توسط تنها مجری‌ها قابل "
+"مشاهده باشد."
 
-#: models.py:53
+#: django_bigbluebutton/models.py:54
 msgid "Disable Camera"
 msgstr "غیرفعال کردن دوربین"
 
-#: models.py:54
+#: django_bigbluebutton/models.py:55
 msgid "will prevent users from sharing their camera in the meeting"
 msgstr "از اشتراک گذاری دوربین شرکت‌کننده‌ها در جلسه جلوگیری می‌کند."
 
-#: models.py:58
+#: django_bigbluebutton/models.py:59
 msgid "Disable Mic"
 msgstr "غیرفعال کردن میکروفون"
 
-#: models.py:59
+#: django_bigbluebutton/models.py:60
 msgid "will only allow user to join listen only"
 msgstr "به شرکت‌کننده‌ها فقط اجازه گوش‌دادن داده شود."
 
-#: models.py:63
+#: django_bigbluebutton/models.py:64
 msgid "Disable Private chat"
 msgstr "غیرفعال کردن چت خصوصی بین شرکت‌کننده‌ها"
 
-#: models.py:64
+#: django_bigbluebutton/models.py:65
 msgid "if True will disable private chats in the meeting"
 msgstr "اگر فعال باشد چت خصوصی غیرفعال می‌شود."
 
-#: models.py:68
+#: django_bigbluebutton/models.py:69
 msgid "Disable public chat"
 msgstr "غیرفعال کردن چت عمومی"
 
-#: models.py:69
+#: django_bigbluebutton/models.py:70
 msgid "if True will disable public chat in the meeting"
 msgstr "اگر بله باشد چت عمومی غیرفعال می‌شود."
 
-#: models.py:73
+#: django_bigbluebutton/models.py:74
 msgid "Disable Note"
 msgstr "غیرفعال کردن یادداشت"
 
-#: models.py:74
+#: django_bigbluebutton/models.py:75
 msgid "if True will disable notes in the meeting."
 msgstr "اگر بله باشد نمی‌توان در جلسه یادداشت اشتراک گذاشت."
 
-#: models.py:78
+#: django_bigbluebutton/models.py:79
 msgid "Locked Layout"
 msgstr "قفل کردن layout "
 
-#: models.py:79
+#: django_bigbluebutton/models.py:80
 msgid "will lock the layout in the meeting. "
 msgstr "layout در طول ملاقات غیرفعال می‌شود."
 
-#: models.py:87
+#: django_bigbluebutton/models.py:88
 msgid "Parent Meeting ID"
 msgstr "شناسه ملاقات والد"
 
-#: models.py:93
+#: django_bigbluebutton/models.py:94
 msgid "Internal Meeting ID"
 msgstr "شناسه ملاقات داخلی (نرم‌افزار)"
 
-#: models.py:98
+#: django_bigbluebutton/models.py:99
 msgid "Voice Bridge"
 msgstr "پل صوتی"
+
+#: django_bigbluebutton/models.py:112
+msgid "Meeting"
+msgstr "جلسه آنلاین"
