@@ -181,9 +181,9 @@ class Meeting(models.Model):
     def create(cls, name, meeting_id,  **kwargs):
         kwargs.update({
             'record': kwargs.get('record', BBB_RECORD),
+            'logout_url': kwargs.get('logout_url', BBB_LOGOUT_URL),
             'auto_start_recording': kwargs.get('auto_start_recording', BBB_AUTO_RECORDING),
             'allow_start_stop_recording': kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING),
-            'logout_url': kwargs.get('logout_url', BBB_LOGOUT_URL)
         })
 
         m_xml = BigBlueButton().start(
@@ -198,18 +198,19 @@ class Meeting(models.Model):
 
         # Now create a model for it.
         meeting, _ = Meeting.objects.get_or_create(meeting_id=meeting_id)
+
         meeting.name = name
+        meeting.is_running = True
+        meeting.record = kwargs.get('record', True)
         meeting.welcome_text = meeting_json['meetingID']
+        meeting.logout_url = kwargs.get('logout_url', '')
+        meeting.voice_bridge = meeting_json['voiceBridge']
         meeting.attendee_password = meeting_json['attendeePW']
         meeting.moderator_password = meeting_json['moderatorPW']
-        meeting.internal_meeting_id = meeting_json['internalMeetingID']
         meeting.parent_meeting_id = meeting_json['parentMeetingID']
-        meeting.voice_bridge = meeting_json['voiceBridge']
-        meeting.logout_url = kwargs.get('logout_url', '')
-        meeting.record = kwargs.get('record', True)
+        meeting.internal_meeting_id = meeting_json['internalMeetingID']
         meeting.auto_start_recording = kwargs.get('auto_start_recording', True)
         meeting.allow_start_stop_recording = kwargs.get('allow_start_stop_recording', True)
-        meeting.is_running = True
         meeting.save()
 
         return meeting
