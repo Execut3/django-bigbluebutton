@@ -82,25 +82,24 @@ class BigBlueButton:
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
         result = parse_xml(requests.get(url).content)
+        # Create dict of values for easy use in template
+        d = []
         if result:
-            # Create dict of values for easy use in template
-            d = []
             r = result[1].findall('meeting')
             for m in r:
                 meeting_id = m.find('meetingID').text
                 password = m.find('moderatorPW').text
                 d.append({
-                    'name': meeting_id,
+                    'meeting_id': meeting_id,
                     'running': m.find('running').text,
                     'moderator_pw': password,
                     'attendee_pw': m.find('attendeePW').text,
                     'info': self.meeting_info(
                         meeting_id,
-                        password)
+                        password
+                    )
                 })
-            return d
-        else:
-            return 'error'
+        return d
 
     def join_url(self, meeting_id, name, password):
         call = 'join'

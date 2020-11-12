@@ -14,10 +14,22 @@ class Meeting(models.Model):
         When creating a big blue button room with BBB APIs,
         Will store it's info here for later usages.
     """
-    name = models.CharField(max_length=100, verbose_name=_('Name of Meeting'))
-    meeting_id = models.CharField(max_length=100, unique=True, verbose_name=_('Meeting ID'))
-    attendee_password = models.CharField(max_length=50, verbose_name=_('Attendee Password'))
-    moderator_password = models.CharField(max_length=50, verbose_name=_('Moderator Password'))
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name of Meeting')
+    )
+    meeting_id = models.CharField(
+        max_length=100, unique=True,
+        verbose_name=_('Meeting ID')
+    )
+    attendee_password = models.CharField(
+        max_length=50,
+        verbose_name=_('Attendee Password')
+    )
+    moderator_password = models.CharField(
+        max_length=50,
+        verbose_name=_('Moderator Password')
+    )
     is_running = models.BooleanField(
         default=False,
         verbose_name=_('Is running'),
@@ -35,8 +47,14 @@ class Meeting(models.Model):
         default='', null=True, blank=True,
         verbose_name=_('URL to visit after user logged out')
     )
-    record = models.BooleanField(default=True, verbose_name=_('Record'))
-    auto_start_recording = models.BooleanField(default=True, verbose_name=_('Auto Start Recording'))
+    record = models.BooleanField(
+        default=True,
+        verbose_name=_('Record')
+    )
+    auto_start_recording = models.BooleanField(
+        default=True,
+        verbose_name=_('Auto Start Recording')
+    )
     allow_start_stop_recording = models.BooleanField(
         default=True,
         verbose_name=_('Allow Stop/Start Recording'),
@@ -45,7 +63,8 @@ class Meeting(models.Model):
     webcam_only_for_moderators = models.BooleanField(
         default=False,
         verbose_name=_('Webcam Only for moderators?'),
-        help_text=_('will cause all webcams shared by viewers during this meeting to only appear for moderators')
+        help_text=_('will cause all webcams shared by viewers '
+                    'during this meeting to only appear for moderators')
     )
 
     # Lock settings
@@ -133,7 +152,10 @@ class Meeting(models.Model):
 
     def end(self):
         # If successfully ended, will return True
-        ended = BigBlueButton().end_meeting(self.meeting_id, self.moderator_password)
+        ended = BigBlueButton().end_meeting(
+            meeting_id=self.meeting_id,
+            password=self.moderator_password
+        )
         ended = True if ended == True else False
         if ended:
             self.is_running = False
@@ -215,7 +237,7 @@ class Meeting(models.Model):
 
         try:
             # First get list of running meetings from bbb
-            meetings_id_list = [item['name'] for item in running_meetings]
+            meetings_id_list = [item['meeting_id'] for item in running_meetings]
 
             # Now update all to not running
             Meeting.objects.all().update(is_running=False)
