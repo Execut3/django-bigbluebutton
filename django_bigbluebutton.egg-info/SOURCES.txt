@@ -9,6 +9,7 @@ django_bigbluebutton/bbb.py
 django_bigbluebutton/forms.py
 django_bigbluebutton/models.py
 django_bigbluebutton/settings.py
+django_bigbluebutton/signals.py
 django_bigbluebutton/tests.py
 django_bigbluebutton/urls.py
 django_bigbluebutton/utils.py
