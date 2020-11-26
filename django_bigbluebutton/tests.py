@@ -8,11 +8,15 @@ from .utils import xml_to_json
 class BBBTest(TestCase):
 
     def test_get_meetings(self):
+        """ Test if BigBlueButton's get_meeting method is working or not.
+        It should return list of all running meetings right now!. """
         meetings = BigBlueButton().get_meetings()
         print(meetings)
 
         # If error in getMeetings() will return 'error' value instead of list of meeting rooms
         self.assertTrue(meetings != 'error')
+
+        self.assertTrue(type(meetings) == list)
 
     def test_create_meeting(self):
         """ Will try to create a meeting with bbb.
@@ -66,7 +70,7 @@ class BBBTest(TestCase):
     def test_create_and_join_meeting(self):
         """ Will just call cls method in Meeting model. """
         meeting_name = 'test'
-        meeting_id = 'test'
+        meeting_id = 'testtttt'
         meeting_welcome = 'test meeting welcome!'
         meeting = Meeting.create(meeting_name, meeting_id, meeting_welcome=meeting_welcome)
 
@@ -79,7 +83,7 @@ class BBBTest(TestCase):
 
     def test_join_existing_meeting(self):
         meeting_id = 'ranxbqe6jfh1g53ymcnfr2p8elhcduoxsklwb2kr'
-        b = BigBlueButton().join_url(meeting_id, 'رضا ترکمان احمدی', 'dYHwpBBjlZoI')
+        b = BigBlueButton().join_url(meeting_id, 'Test User', 'dYHwpBBjlZoI')
         print(b)
 
     def test_end_meeting(self):

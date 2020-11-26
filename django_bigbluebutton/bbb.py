@@ -30,8 +30,7 @@ class BigBlueButton:
         result = parse_xml(requests.get(url).content)
         if result:
             return result.find('running').text
-        else:
-            return 'error'
+        return 'error'
 
     def end_meeting(self, meeting_id, password):
         print(password)
@@ -47,8 +46,7 @@ class BigBlueButton:
         result = parse_xml(req.content)
         if result:
             return True
-        else:
-            return False
+        return False
 
     def meeting_info(self, meeting_id, password):
         call = 'getMeetingInfo'
@@ -71,8 +69,7 @@ class BigBlueButton:
                 # 'invite_url': reverse('join', args=[meeting_id]),
             }
             return d
-        else:
-            return None
+        return None
 
     def get_meetings(self):
         call = 'getMeetings'

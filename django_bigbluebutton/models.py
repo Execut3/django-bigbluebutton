@@ -9,8 +9,7 @@ from .utils import xml_to_json
 
 
 class Meeting(models.Model):
-    """
-        This models hold information about each meeting room.
+    """ This models hold information about each meeting room.
         When creating a big blue button room with BBB APIs,
         Will store it's info here for later usages.
     """
@@ -33,13 +32,13 @@ class Meeting(models.Model):
     is_running = models.BooleanField(
         default=False,
         verbose_name=_('Is running'),
-        help_text='Indicates whether this meeting is running in BigBlueButton or not!'
+        help_text=_('Indicates whether this meeting is running in BigBlueButton or not!')
     )
 
     # Configs
     max_participants = models.IntegerField(default=10, verbose_name=_('Max Participants'))
     welcome_text = models.TextField(
-        default='Welcome!',
+        default=_('Welcome!'),
         verbose_name=_('Meeting Text in Bigbluebutton')
     )
     logout_url = models.CharField(
