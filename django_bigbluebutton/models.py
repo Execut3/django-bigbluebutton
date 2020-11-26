@@ -36,7 +36,10 @@ class Meeting(models.Model):
     )
 
     # Configs
-    max_participants = models.IntegerField(default=10, verbose_name=_('Max Participants'))
+    max_participants = models.IntegerField(
+        default=10,
+        verbose_name=_('Max Participants')
+    )
     welcome_text = models.TextField(
         default=_('Welcome!'),
         verbose_name=_('Meeting Text in Bigbluebutton')
@@ -51,7 +54,7 @@ class Meeting(models.Model):
         verbose_name=_('Record')
     )
     auto_start_recording = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name=_('Auto Start Recording')
     )
     allow_start_stop_recording = models.BooleanField(
@@ -165,19 +168,38 @@ class Meeting(models.Model):
             meeting_ended.send(sender=self)
         return ended
 
-    def create_join_link(self, fullname, role='moderator', **kwargs):
+    def create_join_link(self, fullname, role='moderator'):
+        kwargs = {
+            'record': self.record,
+            'max_participants': self.max_participants,
+            'welcome_text': self.welcome_text,
+            'logout_url': self.logout_url,
+            'auto_start_recording': self.auto_start_recording,
+            'allow_start_stop_recording': self.allow_start_stop_recording,
+            'webcam_only_for_moderators': self.webcam_only_for_moderators,
+            'lock_settings_disable_cam': self.lock_settings_disable_cam,
+            'lock_settings_disable_mic': self.lock_settings_disable_mic,
+            'lock_settings_disable_private_chat': self.lock_settings_disable_private_chat,
+            'lock_settings_disable_public_chat': self.lock_settings_disable_public_chat,
+            'lock_settings_disable_note': self.lock_settings_disable_note,
+            'lock_settings_locked_layout': self.lock_settings_locked_layout,
+        }
+
         meeting = Meeting.create(
-            self.name, self.meeting_id,
+            name=self.name,
+            meeting_id=self.meeting_id,
             meetign_welcome=self.welcome_text,
             attendee_password=self.attendee_password,
             moderator_password=self.moderator_password,
-            **kwargs)
+            **kwargs
+        )
         pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
         link = BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
         return link
 
     @classmethod
-    def create(cls, name, meeting_id,  **kwargs):
+    def create(cls, name, meeting_id, **kwargs):
+
         kwargs.update({
             'record': kwargs.get('record', BBB_RECORD),
             'logout_url': kwargs.get('logout_url', BBB_LOGOUT_URL),

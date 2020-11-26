@@ -115,7 +115,7 @@ class BigBlueButton:
         moderator_password = kwargs.get("moderator_password", self.moderator_password)
 
         # Get extra configs or set default values
-        welcome = kwargs.get('meeting_welcome', 'Welcome!')
+        welcome = kwargs.get('welcome_text', 'Welcome!')
         record = kwargs.get('record', BBB_RECORD)
         auto_start_recording = kwargs.get('auto_start_recording', BBB_AUTO_RECORDING)
         allow_start_stop_recording = kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING)
@@ -131,7 +131,9 @@ class BigBlueButton:
             ('moderatorPW', moderator_password),
             ('record', record),
             ('welcome', welcome),
-            ('logoutUrl', logout_url),
+            ('bannerText', welcome),
+            ('copyright', 'شرکت پیشرو اندیشه پرداز سی‌پل'),
+            ('logoutURL', logout_url),
             ('voiceBridge', voice_bridge),
             ('autoStartRecording', auto_start_recording),
             ('allowStartStopRecording', allow_start_stop_recording),
