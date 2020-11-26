@@ -1,6 +1,7 @@
 import urllib
 import random
 import requests
+import xml.etree.ElementTree as ET
 
 from hashlib import sha1
 
@@ -58,6 +59,26 @@ class BigBlueButton:
         url = self.api_url + call + '?' + hashed
         r = parse_xml(requests.get(url).content)
         if r:
+            attendee_list = []
+            try:
+                for a in r.findall('attendees'):
+                    try:
+                        x = a.find('attendee')
+                        user_id = x.find('userID').text
+                        if not user_id:
+                            continue
+                        fullname = x.find('fullName').text
+                        role = x.find('role')
+                        attendee_list.append({
+                            'id': user_id,
+                            'fullname': fullname,
+                            'role': role
+                        })
+                    except:
+                        continue
+            except Exception as e:
+                pass
+
             # Create dict of values for easy use in template
             d = {
                 'start_time': r.find('startTime').text,
@@ -66,6 +87,7 @@ class BigBlueButton:
                 'moderator_count': r.find('moderatorCount').text,
                 'moderator_pw': r.find('moderatorPW').text,
                 'attendee_pw': r.find('attendeePW').text,
+                'attendee_list': attendee_list,
                 # 'invite_url': reverse('join', args=[meeting_id]),
             }
             return d

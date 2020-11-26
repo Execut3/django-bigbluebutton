@@ -137,6 +137,14 @@ class Meeting(models.Model):
             self.name = self.meeting_id
         super(Meeting, self).save()
 
+    @property
+    def info(self):
+        # Will return result of bbb.get_meeting_info
+        return BigBlueButton().meeting_info(
+            self.meeting_id,
+            self.moderator_password
+        )
+
     def check_is_running(self, commit=True):
         self.is_running = BigBlueButton().is_running(self.meeting_id)
         if commit:
