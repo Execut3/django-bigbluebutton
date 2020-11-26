@@ -6,7 +6,7 @@ README = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name='django-bigbluebutton',
-    version='0.2.5',
+    version='0.3.0',
     packages=['django_bigbluebutton'],
     description='A Django integration APP to connect django projects to Big Blue Button ;)',
     long_description=README,
