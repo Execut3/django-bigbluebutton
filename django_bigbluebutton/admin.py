@@ -23,10 +23,12 @@ class MeetingAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(MeetingAdmin, self).get_queryset(request)
+
         # If settings.UPDATE_RUNNING_ON_EACH_CALL, then on each call
         # For queryset, call getMeetings and update status of meetings
         if UPDATE_RUNNING_ON_EACH_CALL:
             Meeting.update_running_meetings()
+
         return qs
 
     def join_meeting_action(self, request, meeting_id, *args, **kwargs):
@@ -34,11 +36,11 @@ class MeetingAdmin(admin.ModelAdmin):
         get a join link to meeting with provided meeting_id.
         And will redirect to join link. """
         meeting = self.get_object(request, meeting_id)
-        link = meeting.create_join_link('Administrator', 'moderator')
+        meeting.start()
         if not meeting.is_running:
             meeting.is_running = True
             meeting.save()
-        return HttpResponseRedirect(link)
+        return HttpResponseRedirect(reverse('admin:django_bigbluebutton_meeting_changelist'))
 
     def end_meeting_action(self, request, meeting_id, *args, **kwargs):
         """ Will call end() method from bigbluebutton,

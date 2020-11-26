@@ -168,33 +168,9 @@ class Meeting(models.Model):
             meeting_ended.send(sender=self)
         return ended
 
-    def create_join_link(self, fullname, role='moderator'):
-        kwargs = {
-            'record': self.record,
-            'max_participants': self.max_participants,
-            'welcome_text': self.welcome_text,
-            'logout_url': self.logout_url,
-            'auto_start_recording': self.auto_start_recording,
-            'allow_start_stop_recording': self.allow_start_stop_recording,
-            'webcam_only_for_moderators': self.webcam_only_for_moderators,
-            'lock_settings_disable_cam': self.lock_settings_disable_cam,
-            'lock_settings_disable_mic': self.lock_settings_disable_mic,
-            'lock_settings_disable_private_chat': self.lock_settings_disable_private_chat,
-            'lock_settings_disable_public_chat': self.lock_settings_disable_public_chat,
-            'lock_settings_disable_note': self.lock_settings_disable_note,
-            'lock_settings_locked_layout': self.lock_settings_locked_layout,
-        }
-
-        meeting = Meeting.create(
-            name=self.name,
-            meeting_id=self.meeting_id,
-            meetign_welcome=self.welcome_text,
-            attendee_password=self.attendee_password,
-            moderator_password=self.moderator_password,
-            **kwargs
-        )
-        pw = meeting.moderator_password if role == 'moderator' else meeting.attendee_password
-        link = BigBlueButton().join_url(meeting.meeting_id, fullname, pw)
+    def create_join_link(self, fullname, role='moderator', **kwargs):
+        pw = self.moderator_password if role == 'moderator' else self.attendee_password
+        link = BigBlueButton().join_url(self.meeting_id, fullname, pw, **kwargs)
         return link
 
     @classmethod
@@ -207,11 +183,7 @@ class Meeting(models.Model):
             'allow_start_stop_recording': kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING),
         })
 
-        m_xml = BigBlueButton().start(
-            name=name,
-            meeting_id=meeting_id,
-            **kwargs
-        )
+        m_xml = BigBlueButton().start(name=name, meeting_id=meeting_id, **kwargs)
         print(m_xml)
         meeting_json = xml_to_json(m_xml)
         if meeting_json['returncode'] != 'SUCCESS':

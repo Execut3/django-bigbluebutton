@@ -98,13 +98,17 @@ class BigBlueButton:
                 })
         return d
 
-    def join_url(self, meeting_id, name, password):
+    def join_url(self, meeting_id, name, password, **kwargs):
         call = 'join'
-        query = urllib.parse.urlencode((
+        data = (
             ('fullName', name),
             ('meetingID', meeting_id),
             ('password', password),
-        ))
+        )
+        for key, value in kwargs.items():
+            data = data + ((key, value), )
+
+        query = urllib.parse.urlencode(data)
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
         return url
