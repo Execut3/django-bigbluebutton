@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from django.db import models
@@ -218,6 +219,15 @@ class Meeting(models.Model):
         meeting.allow_start_stop_recording = kwargs.get('allow_start_stop_recording', True)
         meeting.save()
 
+        # Register a hook for this meeting
+        callback_url = settings.BBB_CALLBACK_URL
+        if callback_url:
+            try:
+                hook_url = str(callback_url).rstrip('/') + '/api/meeting/{}/callback/'.format(meeting_id)
+                BigBlueButton().create_hook(hook_url, meeting_id)
+            except Exception as e:
+                logging.error('Error in setting api hook for meeting: {}, {}'.format(meeting_id, str(e)))
+
         return meeting
 
     @classmethod
@@ -303,3 +313,18 @@ class MeetingLog(models.Model):
         db_table = 'meeting_log'
         verbose_name = 'Meeting Log'
         verbose_name_plural = _('Meeting Log')
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        # If already created, should update all prev logs for this meeting and set their left_date
+        if not self.pk:
+            now_date = datetime.datetime.now()
+            MeetingLog.objects.filter(
+                user=self.user,
+                meeting=self.meeting,
+                left_date__isnull=True
+            ).update(left_date=now_date)
+
+        super(MeetingLog, self).save()
+

@@ -5,6 +5,8 @@ from django.conf import settings
 BBB_API_URL = getattr(settings, 'BBB_API_URL', None)
 BBB_SECRET_KEY = getattr(settings, 'BBB_SECRET_KEY', None)
 
+BBB_CALLBACK_URL = getattr(settings, 'BBB_CALLBACK_URL', None)
+
 
 """ UPDATE_RUNNING_ON_EACH_CALL:
 
