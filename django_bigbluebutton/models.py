@@ -1,11 +1,15 @@
 import logging
 
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from .settings import *
 from .bbb import BigBlueButton
 from .utils import xml_to_json
+
+
+User = get_user_model()
 
 
 class Meeting(models.Model):
@@ -248,3 +252,54 @@ class Meeting(models.Model):
             Meeting.objects.filter(meeting_id__in=meetings_id_list).update(is_running=True)
         except Exception as e:
             logging.error('[-] Exception in update_running_meetings, {}'.format(str(e)))
+
+
+class MeetingLog(models.Model):
+    """ Will store detail logs about user joins and disconnects.
+
+    By joining each user, a new record will be created,
+    and when user left the meeting or the meeting ended,
+    It will close that log and set the end_date for it.
+    """
+    user = models.ForeignKey(
+        to=User,
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('User'),
+        on_delete=models.SET_NULL,
+        related_name='meeting_log',
+    )       # It can be null
+    fullname = models.CharField(
+        default='',
+        max_length=50,
+        null=True, blank=True,
+        verbose_name=_('User fullname')
+    )
+    meeting = models.ForeignKey(
+        to=Meeting,
+        related_name='logs',
+        null=True, blank=True,
+        verbose_name=_('Meeting'),
+        on_delete=models.SET_NULL,
+    )
+    join_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Join Date')
+    )
+    left_date = models.DateTimeField(
+        null=True, blank=True,
+        verbose_name=_('Left Date')
+    )
+
+    # Time related Info
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{}-{}'.format(self.id, self.fullname)
+
+    class Meta:
+        db_table = 'meeting_log'
+        verbose_name = 'Meeting Log'
+        verbose_name_plural = _('Meeting Log')
