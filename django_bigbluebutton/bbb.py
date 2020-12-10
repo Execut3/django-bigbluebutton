@@ -11,6 +11,17 @@ from .utils import parse_xml
 
 
 class BigBlueButton:
+    """ Main class for BigBlueButton
+
+    List of methods:
+        - api_call
+        - is_running
+        - end_meeting
+        - meeting_info
+        - get_meetings
+        - join_url
+        - start
+    """
     secret_key = settings.BBB_SECRET_KEY
     api_url = settings.BBB_API_URL
     attendee_password = 'ap'
@@ -200,3 +211,104 @@ class BigBlueButton:
             return result
         else:
             raise
+
+    def get_hooks(self):
+        """ Will return list of existing hooks.
+
+        output sample:
+            <response>
+            <returncode>SUCCESS</returncode>
+            <hooks>
+                <hook>
+                    <hookID>2</hookID>
+                    <callbackURL>
+                    <![CDATA[ https://webhook.site/7897a4f6-9388-4335-8055-d4550ba39fea ]]>
+                    </callbackURL>
+                    <meetingID>
+                    <![CDATA[ meeting-11 ]]>
+                    </meetingID>
+                    <permanentHook>false</permanentHook>
+                    <rawData>false</rawData>
+                </hook>
+            </hooks>
+            </response>
+        """
+        call = 'hooks/list'
+        query = urllib.parse.urlencode(())
+        hashed = self.api_call(query, call)
+        url = self.api_url + call + '?' + hashed
+        r = parse_xml(requests.get(url).content)
+
+        hooks_list = []
+        if r:
+            try:
+                for h in r.findall('hooks'):
+                    try:
+                        x = h.find('hook')
+                        callback_url = x.find('callbackURL').text
+                        meeting_id = x.find('meetingID').text
+                        hook_id = x.find('meetingID').text
+                    except Exception as e:
+                        # print(e)
+                        continue
+
+                    hooks_list.append({
+                        'hook_id': hook_id,
+                        'meeting_id': meeting_id,
+                        'callback_url': callback_url
+                    })
+            except Exception as e:
+                # print(e)
+                pass
+
+        print(hooks_list)
+        return hooks_list
+
+    def create_hook(self, callback_url, meeting_id=None):
+        """ Will create a hook for meeting
+
+        :param meeting_id:      name of meeting to append hook to
+        :param callback_url:    callback url to be called whenever hook happened for that meeting_id
+
+        bbb request result:
+            <response>
+            <returncode>SUCCESS</returncode>
+            <hookID>2</hookID>
+            <messageKey>duplicateWarning</messageKey>
+            <message>There is already a hook for this callback URL.</message>
+            </response>
+        """
+        """ Return whether meeting_id is running or not! """
+        call = 'hooks/create'
+        data = (
+            ('callbackURL', callback_url),
+            ('meetingID', meeting_id),
+        )
+
+        query = urllib.parse.urlencode(data)
+        hashed = self.api_call(query, call)
+        url = self.api_url + call + '?' + hashed
+        r = parse_xml(requests.get(url).content)
+
+        try:
+            hook_id = r.find('hookID').text
+            return {'hook_id': hook_id}
+        except:
+            return None
+
+    def destroy_hook(self, hook_id):
+        call = 'hooks/destroy'
+        data = (
+            ('hookID', hook_id),
+        )
+        query = urllib.parse.urlencode(data)
+        hashed = self.api_call(query, call)
+        url = self.api_url + call + '?' + hashed
+        print(url)
+        result = parse_xml(requests.get(url).content)
+        print(result)
+        if result:
+            return True
+        return False
+
+

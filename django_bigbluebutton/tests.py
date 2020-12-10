@@ -95,6 +95,42 @@ class BBBTest(TestCase):
         status = BigBlueButton().end_meeting('test', meeting.moderator_password)
         print(status)
 
+    def test_hook_create(self):
+        meeting_id = 'testmeeting-11'
+        Meeting.create('test meeting', meeting_id, meeting_welcome='welcome')
+        result = BigBlueButton().create_hook('https://webhook.site/7897a4f6-9388-4335-8055-d4550ba39fea', meeting_id)
+        self.assertTrue(result)
+
+    def test_hook_delete(self):
+        meeting_id = 'testmeeting-11'
+
+        # First create a meeting
+        Meeting.create('test meeting', meeting_id, meeting_welcome='welcome')
+
+        # Now create a hook for it
+        res = BigBlueButton().create_hook('https://webhook.site/7897a4f6-9388-4335-8055-d4550ba39fea', meeting_id)
+        hook_id = res['hook_id']
+
+        # Now try to remove that hook
+        status = BigBlueButton().destroy_hook(hook_id)
+        self.assertTrue(status)
+
+    def test_hook_list(self):
+        meeting_id = 'testmeeting-11'
+        result = BigBlueButton().get_hooks()
+        len1 = len(result)
+
+        # Now create a new hook
+        Meeting.create('test meeting', meeting_id, meeting_welcome='welcome')
+        BigBlueButton().create_hook('https://webhook.site/7897a4f6-9388-4335-8055-d4550ba39fea', meeting_id)
+
+        # Now check new list of hooks see if it is increased
+        result = BigBlueButton().get_hooks()
+        len2 = len(result)
+
+        self.assertTrue(len1 != len2)
+        self.assertTrue(len2 - len1 == 1)
+
     def test_get_meeting_info_method(self):
         """ In this test, Will test if get_meeting_info method
         is working or not, and does it have useful info like
