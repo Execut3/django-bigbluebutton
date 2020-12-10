@@ -97,5 +97,5 @@ class BBBTest(TestCase):
 
     def test_get_meeting_info_method(self):
         """ In this test, Will test if get_meeting_info method
-        is working or not, and does it have usefull info like
+        is working or not, and does it have useful info like
         list of """

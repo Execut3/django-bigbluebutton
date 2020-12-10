@@ -1,12 +1,13 @@
 import urllib
 import random
 import requests
-import xml.etree.ElementTree as ET
 
 from hashlib import sha1
+from django.utils.translation import ugettext_lazy as _
 
-from .utils import parse_xml
+
 from .settings import *
+from .utils import parse_xml
 
 
 class BigBlueButton:
@@ -16,12 +17,17 @@ class BigBlueButton:
     moderator_password = 'mp'
 
     def api_call(self, query, call):
+        """ Method to create valid API query
+        to call on BigBlueButton. Because each query
+        should have a encrypted checksum based on request Data.
+        """
         prepared = '{}{}{}'.format(call, query, self.secret_key)
         checksum = sha1(str(prepared).encode('utf-8')).hexdigest()
         result = "%s&checksum=%s" % (query, checksum)
         return result
 
     def is_running(self, meeting_id):
+        """ Return whether meeting_id is running or not! """
         call = 'isMeetingRunning'
         query = urllib.parse.urlencode((
             ('meetingID', meeting_id),
@@ -34,7 +40,9 @@ class BigBlueButton:
         return 'error'
 
     def end_meeting(self, meeting_id, password):
-        print(password)
+        """ End meeting,
+        Should provide Moderator password as input to make it work!
+        """
         call = 'end'
         query = urllib.parse.urlencode((
             ('meetingID', meeting_id),
@@ -43,13 +51,21 @@ class BigBlueButton:
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
         req = requests.get(url)
-        print(req.content)
         result = parse_xml(req.content)
         if result:
             return True
         return False
 
     def meeting_info(self, meeting_id, password):
+        """ Get information about meeting.
+        result includes below data:
+            start_time
+            end_time
+            participant_count
+            moderator_count
+            attendee_pw
+            moderator_pw
+        """
         call = 'getMeetingInfo'
         query = urllib.parse.urlencode((
             ('meetingID', meeting_id),
@@ -94,6 +110,7 @@ class BigBlueButton:
         return None
 
     def get_meetings(self):
+        """ Will return list of running meetings. """
         call = 'getMeetings'
         query = urllib.parse.urlencode((
             ('random', 'random'),
@@ -121,6 +138,11 @@ class BigBlueButton:
         return d
 
     def join_url(self, meeting_id, name, password, **kwargs):
+        """ Join existing meeting_id.
+
+        can send userID also as **kwargs so it will be set on
+        meeting join, and can track useful info about users later.
+        """
         call = 'join'
         data = (
             ('fullName', name),
@@ -128,6 +150,7 @@ class BigBlueButton:
             ('password', password),
         )
         for key, value in kwargs.items():
+            # Iterate on kwargs keys, and set their key=value in request.
             data = data + ((key, value), )
 
         query = urllib.parse.urlencode(data)
@@ -136,12 +159,17 @@ class BigBlueButton:
         return url
 
     def start(self, name, meeting_id, **kwargs):
+        """ Start meeting with provided info.
+
+        Most of BigBlueButton info is provided now.
+        TODO: will add more configs for bigbluebutton later!
+        """
         call = 'create'
         attendee_password = kwargs.get("attendee_password", self.attendee_password)
         moderator_password = kwargs.get("moderator_password", self.moderator_password)
 
         # Get extra configs or set default values
-        welcome = kwargs.get('welcome_text', 'Welcome!')
+        welcome = kwargs.get('welcome_text', _('Welcome!'))
         record = kwargs.get('record', BBB_RECORD)
         auto_start_recording = kwargs.get('auto_start_recording', BBB_AUTO_RECORDING)
         allow_start_stop_recording = kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING)
