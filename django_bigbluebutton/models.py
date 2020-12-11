@@ -125,6 +125,19 @@ class Meeting(models.Model):
         verbose_name=_('Voice Bridge')
     )
 
+    # Hook related info
+    hook_id = models.CharField(
+        null=True, blank=True,
+        max_length=50, default='',
+        verbose_name=_('Hook ID received from BBB')
+    )
+    hook_url = models.CharField(
+        default='',
+        max_length=500,
+        null=True, blank=True,
+        verbose_name=_('Hook URL')
+    )
+
     # Time related Info
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -151,6 +164,7 @@ class Meeting(models.Model):
         )
 
     def check_is_running(self, commit=True):
+        """ Call bbb is_running method, and see if this meeting_id is running! """
         self.is_running = BigBlueButton().is_running(self.meeting_id)
         if commit:
             self.save()
@@ -158,12 +172,20 @@ class Meeting(models.Model):
 
     def start(self):
         """ Will start already created meeting again. """
-        return BigBlueButton().start(
+        result = BigBlueButton().start(
             name=self.name,
             meeting_id=self.meeting_id,
             attendee_password=self.attendee_password,
             moderator_password=self.moderator_password
         )
+
+        if result:
+            # It's better to create hook again,
+            # So if by any reason is removed from bbb, again be created
+            # If already exist will just give warning and will be ignored
+            self.create_hook()
+
+        return result
 
     def end(self):
         # If successfully ended, will return True
@@ -185,6 +207,98 @@ class Meeting(models.Model):
         pw = self.moderator_password if role == 'moderator' else self.attendee_password
         link = BigBlueButton().join_url(self.meeting_id, fullname, pw, **kwargs)
         return link
+
+    def create_hook(self):
+        """ By calling this method, will create a hook to callback-url for this meeting-id
+
+        TODO: Maybe it's better to delete hooks first then create new one.
+        """
+        callback_url = settings.BBB_CALLBACK_URL
+        if callback_url:
+            try:
+                # Be noted meeting_id is different from id,
+                # meeting_id is like meeting-11 (value to know in bbb)
+                # id is just primary key for Meeting instance
+                if not self.hook_url:
+                    self.hook_url = '{callback}/api/meeting/{id}/callback'.format(
+                        id=self.id,
+                        callback=str(callback_url).rstrip('/'),
+                    )
+                output = BigBlueButton().create_hook(self.hook_url, self.meeting_id)
+                if output.get('hook_id'):
+                    self.hook_id = output['hook_id']
+                    self.save()
+            except Exception as e:
+                error_msg = 'Error in setting api hook for meeting: {}, {}'.format(self.meeting_id, str(e))
+                logging.error(error_msg)
+
+    def delete_hook(self):
+        if self.hook_id:
+            BigBlueButton().destroy_hook(self.hook_id)
+
+    def get_report(self):
+        """ This method will return useful info about participants in meeting.
+
+        return will be like this:
+
+            {
+                "activity_logs": [
+                    {
+                        'user': {
+                            'id': '432',
+                            'fullname': 'Execut3'
+                        },
+                        'join_date': '2020-10-20',
+                        'left_date': None
+                    }
+                ],
+                "presence_time_logs": {
+                    '432': {
+                        'duration': 123,
+                        'fullname': 'Execut3'
+                    }
+                }
+            }
+        """
+        logs = MeetingLog.objects.filter(meeting_id=self.meeting_id).select_related('user')
+        logs = list(logs)
+
+        presence_time_logs = {}     # A dict which it's keys are user_id s
+        activity_logs = []
+        for log in logs:
+            userkey = log.fullname
+            if log.user:
+                userkey = log.user.id
+            userkey = str(userkey)
+
+            if log.left_date:
+                duration = (log.left_date - log.join_date).seconds
+            else:
+                now = datetime.datetime.now()
+                duration = (now - log.join_date).seconds
+            if userkey in presence_time_logs.keys():
+                c = presence_time_logs[userkey]['duration']
+                presence_time_logs[userkey] = c + duration
+            else:
+                presence_time_logs[userkey] = {
+                    'duration': duration,
+                    'fullname': log.fullname
+                }
+
+            tmp = {
+                'user': {
+                    'id': userkey,
+                    'fullname': log.fullname
+                },
+                'join_date': log.join_date,
+                'left_date': log.left_date
+            }
+            activity_logs.append(tmp)
+
+        return {
+            'activity_logs': activity_logs,
+            'presence_time_logs': presence_time_logs,
+        }
 
     @classmethod
     def create(cls, name, meeting_id, **kwargs):
@@ -219,13 +333,7 @@ class Meeting(models.Model):
         meeting.save()
 
         # Register a hook for this meeting
-        callback_url = settings.BBB_CALLBACK_URL
-        if callback_url:
-            try:
-                hook_url = str(callback_url).rstrip('/') + '/api/meeting/{}/callback/'.format(meeting.id)
-                BigBlueButton().create_hook(hook_url, meeting_id)
-            except Exception as e:
-                logging.error('Error in setting api hook for meeting: {}, {}'.format(meeting_id, str(e)))
+        meeting.create_hook()
 
         return meeting
 
@@ -291,7 +399,7 @@ class MeetingLog(models.Model):
     #     null=True, blank=True,
     #     verbose_name=_('Meeting'),
     #     on_delete=models.SET_NULL,
-    # )
+    # )     # TODO: for now will not use it, cause will make complex when MeetingLog Update
     meeting_id = models.CharField(
         default='',
         max_length=100,
