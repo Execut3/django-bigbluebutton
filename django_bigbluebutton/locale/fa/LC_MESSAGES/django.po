@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-11 06:07+0330\n"
+"POT-Creation-Date: 2020-12-11 21:32+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "خوش آمدید!"
 msgid "Name of Meeting"
 msgstr "نام ملاقات"
 
-#: models.py:27 models.py:298
+#: models.py:27 models.py:406
 msgid "Meeting ID"
 msgstr "شناسه جلسه"
 
@@ -148,26 +148,34 @@ msgstr "شناسه ملاقات داخلی (نرم‌افزار)"
 msgid "Voice Bridge"
 msgstr "پل صوتی"
 
+#: models.py:132
+msgid "Hook ID received from BBB"
+msgstr "شناسه Hook که از سمت BBB دریافت شده است"
+
 #: models.py:138
+msgid "Hook URL"
+msgstr "آدرس برای هوک کردن"
+
+#: models.py:151
 msgid "Meeting"
 msgstr "جلسه آنلاین"
 
-#: models.py:278
+#: models.py:386
 msgid "User"
 msgstr "کاربر"
 
-#: models.py:286
+#: models.py:394
 msgid "User fullname"
 msgstr "نام کامل کاربر"
 
-#: models.py:302
+#: models.py:410
 msgid "Join Date"
 msgstr "تاریخ وصل شدن"
 
-#: models.py:306
+#: models.py:414
 msgid "Left Date"
 msgstr "تاریخ ترک کردن"
 
-#: models.py:319
+#: models.py:427
 msgid "Meeting Log"
-msgstr "جلسه آنلاین"
+msgstr "لاگ ملاقات"
