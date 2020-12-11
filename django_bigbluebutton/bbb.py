@@ -288,6 +288,7 @@ class BigBlueButton:
         query = urllib.parse.urlencode(data)
         hashed = self.api_call(query, call)
         url = self.api_url + call + '?' + hashed
+        print(url)
         r = parse_xml(requests.get(url).content)
 
         try:

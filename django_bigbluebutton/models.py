@@ -188,7 +188,6 @@ class Meeting(models.Model):
 
     @classmethod
     def create(cls, name, meeting_id, **kwargs):
-
         kwargs.update({
             'record': kwargs.get('record', BBB_RECORD),
             'logout_url': kwargs.get('logout_url', BBB_LOGOUT_URL),
@@ -223,7 +222,7 @@ class Meeting(models.Model):
         callback_url = settings.BBB_CALLBACK_URL
         if callback_url:
             try:
-                hook_url = str(callback_url).rstrip('/') + '/api/meeting/{}/callback/'.format(meeting_id)
+                hook_url = str(callback_url).rstrip('/') + '/api/meeting/{}/callback/'.format(meeting.id)
                 BigBlueButton().create_hook(hook_url, meeting_id)
             except Exception as e:
                 logging.error('Error in setting api hook for meeting: {}, {}'.format(meeting_id, str(e)))
@@ -286,12 +285,17 @@ class MeetingLog(models.Model):
         null=True, blank=True,
         verbose_name=_('User fullname')
     )
-    meeting = models.ForeignKey(
-        to=Meeting,
-        related_name='logs',
-        null=True, blank=True,
-        verbose_name=_('Meeting'),
-        on_delete=models.SET_NULL,
+    # meeting = models.ForeignKey(
+    #     to=Meeting,
+    #     related_name='logs',
+    #     null=True, blank=True,
+    #     verbose_name=_('Meeting'),
+    #     on_delete=models.SET_NULL,
+    # )
+    meeting_id = models.CharField(
+        default='',
+        max_length=100,
+        verbose_name=_('Meeting ID')
     )
     join_date = models.DateTimeField(
         auto_now_add=True,
@@ -322,9 +326,12 @@ class MeetingLog(models.Model):
             now_date = datetime.datetime.now()
             MeetingLog.objects.filter(
                 user=self.user,
-                meeting=self.meeting,
+                meeting_id=self.meeting_id,
                 left_date__isnull=True
             ).update(left_date=now_date)
+
+        if self.user:
+            self.fullname = self.user.fullname
 
         super(MeetingLog, self).save()
 

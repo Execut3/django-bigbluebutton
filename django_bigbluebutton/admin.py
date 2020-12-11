@@ -5,7 +5,7 @@ from django.urls import reverse, re_path, path
 
 from django.utils.html import format_html
 
-from .models import Meeting
+from .models import Meeting, MeetingLog
 from .forms import MeetingCreateLinkForm
 from .settings import UPDATE_RUNNING_ON_EACH_CALL
 
@@ -160,3 +160,6 @@ class MeetingAdmin(admin.ModelAdmin):
         return HttpResponseRedirect(".")
 
     update_running_meetings.short_description = "Refresh Meetings"
+
+
+admin.site.register(MeetingLog)

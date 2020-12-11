@@ -42,12 +42,12 @@ class MeetingViewSet(ModelViewSet):
                }
             ]&timestamp=1607608642905&domain=meeting.cpol.co
         """
-
         event_data = request.data.get('event', '')
         try:
             tmp = urllib.parse.unquote(event_data)
             event_data = json.loads(tmp)
             for e in event_data:
+                e = e['data']
                 event_id = e['id']
                 if event_id in ['user-joined', 'user-left']:
                     attributes = e['attributes']

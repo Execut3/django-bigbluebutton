@@ -7,5 +7,5 @@ router = DefaultRouter()
 router.register("meeting", MeetingViewSet, "meeting_vs")
 
 urlpatterns = [
-    path('meeting/', include(router.urls)),
+    path('', include(router.urls)),
 ]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-26 15:07+0330\n"
+"POT-Creation-Date: 2020-12-11 06:07+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,69 +18,69 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: models.py:18
-msgid "Name of Meeting"
-msgstr "نام ملاقات"
-
-#: models.py:22
-msgid "Meeting ID"
-msgstr "شناسه جلسه"
-
-#: models.py:26
-msgid "Attendee Password"
-msgstr "پسورد شرکت کننده"
-
-#: models.py:30
-msgid "Moderator Password"
-msgstr "پسورد مجری/مدرس"
-
-#: models.py:34
-msgid "Is running"
-msgstr "در حال اجرا"
-
-#: models.py:35
-msgid "Indicates whether this meeting is running in BigBlueButton or not!"
-msgstr "نشان می‌دهد که آیان این جلسه در حال اجرا هست یا نه!"
-
-#: models.py:41
-msgid "Max Participants"
-msgstr "بیشترین تعداد شرکت‌کنندگان"
-
-#: models.py:44
+#: bbb.py:183 models.py:49
 msgid "Welcome!"
 msgstr "خوش آمدید!"
 
-#: models.py:45
+#: models.py:23
+msgid "Name of Meeting"
+msgstr "نام ملاقات"
+
+#: models.py:27 models.py:298
+msgid "Meeting ID"
+msgstr "شناسه جلسه"
+
+#: models.py:31
+msgid "Attendee Password"
+msgstr "پسورد شرکت کننده"
+
+#: models.py:35
+msgid "Moderator Password"
+msgstr "پسورد مجری/مدرس"
+
+#: models.py:39
+msgid "Is running"
+msgstr "در حال اجرا"
+
+#: models.py:40
+msgid "Indicates whether this meeting is running in BigBlueButton or not!"
+msgstr "نشان می‌دهد که آیان این جلسه در حال اجرا هست یا نه!"
+
+#: models.py:46
+msgid "Max Participants"
+msgstr "بیشترین تعداد شرکت‌کنندگان"
+
+#: models.py:50
 msgid "Meeting Text in Bigbluebutton"
 msgstr "متن جلسه برای نمایش در BigBlueButton"
 
-#: models.py:50
+#: models.py:55
 msgid "URL to visit after user logged out"
 msgstr "آدرس وب برای هدایت کاربران پس از خروج از ملاقات"
 
-#: models.py:54
+#: models.py:59
 msgid "Record"
 msgstr "ضبط کردن"
 
-#: models.py:58
+#: models.py:63
 msgid "Auto Start Recording"
 msgstr "فعال‌سازی ضبط به صورت اتوماتیک"
 
-#: models.py:62
+#: models.py:67
 msgid "Allow Stop/Start Recording"
 msgstr "اجازه دادن برای توقف/اجرای ضبط کردن"
 
-#: models.py:63
+#: models.py:68
 msgid "Allow the user to start/stop recording. (default true)"
 msgstr ""
 "به کاربر اجازه داده شود تا بتواند ضبط کردن را متوقف یا شروع کن (پیش‌فرض بله "
 "است)"
 
-#: models.py:67
+#: models.py:72
 msgid "Webcam Only for moderators?"
 msgstr "وب‌کم فقط برای مجری و مدرس‌ها فعال باشد."
 
-#: models.py:68
+#: models.py:73
 msgid ""
 "will cause all webcams shared by viewers during this meeting to only appear "
 "for moderators"
@@ -88,66 +88,86 @@ msgstr ""
 "در این حالت دوربین اشتراک گذاشته شده توسط شرکت‌کنندگان توسط تنها مجری‌ها قابل "
 "مشاهده باشد."
 
-#: models.py:75
+#: models.py:80
 msgid "Disable Camera"
 msgstr "غیرفعال کردن دوربین"
 
-#: models.py:76
+#: models.py:81
 msgid "will prevent users from sharing their camera in the meeting"
 msgstr "از اشتراک گذاری دوربین شرکت‌کننده‌ها در جلسه جلوگیری می‌کند."
 
-#: models.py:80
+#: models.py:85
 msgid "Disable Mic"
 msgstr "غیرفعال کردن میکروفون"
 
-#: models.py:81
+#: models.py:86
 msgid "will only allow user to join listen only"
 msgstr "به شرکت‌کننده‌ها فقط اجازه گوش‌دادن داده شود."
 
-#: models.py:85
+#: models.py:90
 msgid "Disable Private chat"
 msgstr "غیرفعال کردن چت خصوصی بین شرکت‌کننده‌ها"
 
-#: models.py:86
+#: models.py:91
 msgid "if True will disable private chats in the meeting"
 msgstr "اگر فعال باشد چت خصوصی غیرفعال می‌شود."
 
-#: models.py:90
+#: models.py:95
 msgid "Disable public chat"
 msgstr "غیرفعال کردن چت عمومی"
 
-#: models.py:91
+#: models.py:96
 msgid "if True will disable public chat in the meeting"
 msgstr "اگر بله باشد چت عمومی غیرفعال می‌شود."
 
-#: models.py:95
+#: models.py:100
 msgid "Disable Note"
 msgstr "غیرفعال کردن یادداشت"
 
-#: models.py:96
+#: models.py:101
 msgid "if True will disable notes in the meeting."
 msgstr "اگر بله باشد نمی‌توان در جلسه یادداشت اشتراک گذاشت."
 
-#: models.py:100
+#: models.py:105
 msgid "Locked Layout"
 msgstr "قفل کردن layout "
 
-#: models.py:101
+#: models.py:106
 msgid "will lock the layout in the meeting. "
 msgstr "layout در طول ملاقات غیرفعال می‌شود."
 
-#: models.py:109
+#: models.py:114
 msgid "Parent Meeting ID"
 msgstr "شناسه ملاقات والد"
 
-#: models.py:115
+#: models.py:120
 msgid "Internal Meeting ID"
 msgstr "شناسه ملاقات داخلی (نرم‌افزار)"
 
-#: models.py:120
+#: models.py:125
 msgid "Voice Bridge"
 msgstr "پل صوتی"
 
-#: models.py:133
+#: models.py:138
 msgid "Meeting"
+msgstr "جلسه آنلاین"
+
+#: models.py:278
+msgid "User"
+msgstr "کاربر"
+
+#: models.py:286
+msgid "User fullname"
+msgstr "نام کامل کاربر"
+
+#: models.py:302
+msgid "Join Date"
+msgstr "تاریخ وصل شدن"
+
+#: models.py:306
+msgid "Left Date"
+msgstr "تاریخ ترک کردن"
+
+#: models.py:319
+msgid "Meeting Log"
 msgstr "جلسه آنلاین"
