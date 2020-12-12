@@ -220,7 +220,7 @@ class Meeting(models.Model):
                 # meeting_id is like meeting-11 (value to know in bbb)
                 # id is just primary key for Meeting instance
                 if not self.hook_url:
-                    self.hook_url = '{callback}/api/meeting/{id}/callback'.format(
+                    self.hook_url = '{callback}/api/meeting/{id}/callback/'.format(
                         id=self.id,
                         callback=str(callback_url).rstrip('/'),
                     )
