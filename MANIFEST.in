@@ -5,3 +5,4 @@ include README.md
 recursive-include django_bigbluebutton/migrations *.py
 recursive-include django_bigbluebutton/templates *
 recursive-include django_bigbluebutton/locale *
+recursive-include django_bigbluebutton/api *

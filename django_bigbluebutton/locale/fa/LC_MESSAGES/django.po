@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-11 21:32+0330\n"
+"POT-Creation-Date: 2020-12-12 09:54+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr "بیشترین تعداد شرکت‌کنندگان"
 
 #: models.py:50
 msgid "Meeting Text in Bigbluebutton"
-msgstr "متن جلسه برای نمایش در BigBlueButton"
+msgstr "متن جلسه برای نمایش در استودیو آنلاین"
 
 #: models.py:55
 msgid "URL to visit after user logged out"
