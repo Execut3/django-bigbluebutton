@@ -19,11 +19,11 @@ class Meeting(models.Model):
         Will store it's info here for later usages.
     """
     name = models.CharField(
-        max_length=100,
+        max_length=200,
         verbose_name=_('Name of Meeting')
     )
     meeting_id = models.CharField(
-        max_length=100, unique=True,
+        max_length=200, unique=True,
         verbose_name=_('Meeting ID')
     )
     attendee_password = models.CharField(
@@ -50,7 +50,7 @@ class Meeting(models.Model):
         verbose_name=_('Meeting Text in Bigbluebutton')
     )
     logout_url = models.CharField(
-        max_length=200,
+        max_length=500,
         default='', null=True, blank=True,
         verbose_name=_('URL to visit after user logged out')
     )
