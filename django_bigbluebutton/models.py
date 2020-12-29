@@ -272,18 +272,31 @@ class Meeting(models.Model):
                     userkey = log.user.id
                 userkey = str(userkey)
 
-                if log.left_date:
-                    duration = (log.left_date - log.join_date).seconds
-                else:
-                    now = datetime.datetime.now()
-                    duration = (now - log.join_date).seconds
+                # Now will try to find diff of left_date and join date
+                # To calc duration of log. If already not left, will check
+                # current date for left date. If error will be 0
+                try:
+                    if log.left_date:
+                        duration = (log.left_date - log.join_date).seconds
+                    else:
+                        now = datetime.datetime.now()
+                        duration = (now - log.join_date).seconds
+                except:
+                    duration = 0
+
                 if userkey in presence_time_logs.keys():
                     try:
                         c = presence_time_logs[userkey]['duration']
                     except Exception as e:
                         print(e)
                         c = 0
-                    presence_time_logs[userkey] = c + duration
+                    try:
+                        presence_time_logs[userkey]['duration'] = c + duration
+                    except:
+                        presence_time_logs[userkey] = {
+                            'duration': duration,
+                            'fullname': log.fullname
+                        }
                 else:
                     presence_time_logs[userkey] = {
                         'duration': duration,
