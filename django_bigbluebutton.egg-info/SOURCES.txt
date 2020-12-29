@@ -42,5 +42,6 @@ django_bigbluebutton/migrations/0011_meetinglog.py
 django_bigbluebutton/migrations/0012_meetinglog_meeting.py
 django_bigbluebutton/migrations/0013_auto_20201211_0601.py
 django_bigbluebutton/migrations/0014_auto_20201211_0920.py
+django_bigbluebutton/migrations/0015_auto_20201214_1423.py
 django_bigbluebutton/migrations/__init__.py
 django_bigbluebutton/templates/admin/meeting_create_link.html

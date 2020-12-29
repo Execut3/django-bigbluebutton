@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import urllib.parse
 
 from rest_framework.decorators import action
@@ -50,32 +51,40 @@ class MeetingViewSet(ModelViewSet):
                 e = e['data']
                 event_id = e['id']
                 if event_id in ['user-joined', 'user-left']:
-                    attributes = e['attributes']
-                    meeting_id = attributes['meeting']['external-meeting-id']
-                    user_id = attributes['user']['external-user-id']
-
                     try:
-                        user_id_valid = int(user_id)
-                    except:
-                        user_id_valid = None
+                        attributes = e['attributes']
+                        meeting_id = attributes['meeting']['external-meeting-id']
+                        user_id = attributes['user']['external-user-id']
 
-                    if event_id == 'user-joined':
-                        m = MeetingLog.objects.filter(
+                        try:
+                            user_id_valid = int(user_id)
+                        except:
+                            user_id_valid = None
+
+                        if not user_id_valid:
+                            continue
+
+                        current_datetime = datetime.datetime.now()
+
+                        # When user-joined/left is received
+                        # By default we should set current date
+                        # To all logs of this user which are null yet
+                        Meeting.objects.filter(
                             meeting_id=meeting_id,
                             user_id=user_id_valid,
                             left_date__isnull=True
-                        ).first()
-                        if not m:
+                        ).update(
+                            left_date=current_datetime
+                        )
+
+                        if event_id == 'user-joined':
                             m, _ = MeetingLog.objects.get_or_create(
                                 meeting_id=meeting_id,
                                 user_id=user_id_valid
                             )
-                    else:
-                        MeetingLog.objects.filter(
-                            meeting_id=meeting_id,
-                            user_id=user_id_valid,
-                            left_date__isnull=True
-                        ).update(left_date=datetime.datetime.now())
+                    except Exception as e:
+                        logging.error(str(e))
+                        # TODO: Should be handled better later!
 
         except Exception as e:
             print(e)
