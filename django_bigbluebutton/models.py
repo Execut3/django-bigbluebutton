@@ -266,34 +266,41 @@ class Meeting(models.Model):
         presence_time_logs = {}     # A dict which it's keys are user_id s
         activity_logs = []
         for log in logs:
-            userkey = log.fullname
-            if log.user:
-                userkey = log.user.id
-            userkey = str(userkey)
+            try:
+                userkey = log.fullname
+                if log.user:
+                    userkey = log.user.id
+                userkey = str(userkey)
 
-            if log.left_date:
-                duration = (log.left_date - log.join_date).seconds
-            else:
-                now = datetime.datetime.now()
-                duration = (now - log.join_date).seconds
-            if userkey in presence_time_logs.keys():
-                c = presence_time_logs[userkey]['duration']
-                presence_time_logs[userkey] = c + duration
-            else:
-                presence_time_logs[userkey] = {
-                    'duration': duration,
-                    'fullname': log.fullname
+                if log.left_date:
+                    duration = (log.left_date - log.join_date).seconds
+                else:
+                    now = datetime.datetime.now()
+                    duration = (now - log.join_date).seconds
+                if userkey in presence_time_logs.keys():
+                    try:
+                        c = presence_time_logs[userkey]['duration']
+                    except Exception as e:
+                        print(e)
+                        c = 0
+                    presence_time_logs[userkey] = c + duration
+                else:
+                    presence_time_logs[userkey] = {
+                        'duration': duration,
+                        'fullname': log.fullname
+                    }
+
+                tmp = {
+                    'user': {
+                        'id': userkey,
+                        'fullname': log.fullname
+                    },
+                    'join_date': log.join_date,
+                    'left_date': log.left_date
                 }
-
-            tmp = {
-                'user': {
-                    'id': userkey,
-                    'fullname': log.fullname
-                },
-                'join_date': log.join_date,
-                'left_date': log.left_date
-            }
-            activity_logs.append(tmp)
+                activity_logs.append(tmp)
+            except Exception as e:
+                logging.error(str(e))
 
         return {
             'activity_logs': activity_logs,

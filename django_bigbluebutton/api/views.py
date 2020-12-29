@@ -78,7 +78,7 @@ class MeetingViewSet(ModelViewSet):
                         )
 
                         if event_id == 'user-joined':
-                            m, _ = MeetingLog.objects.get_or_create(
+                            m, _ = MeetingLog.objects.create(
                                 meeting_id=meeting_id,
                                 user_id=user_id_valid
                             )
