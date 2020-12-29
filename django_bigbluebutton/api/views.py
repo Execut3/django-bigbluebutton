@@ -69,7 +69,7 @@ class MeetingViewSet(ModelViewSet):
                         # When user-joined/left is received
                         # By default we should set current date
                         # To all logs of this user which are null yet
-                        Meeting.objects.filter(
+                        MeetingLog.objects.filter(
                             meeting_id=meeting_id,
                             user_id=user_id_valid,
                             left_date__isnull=True
