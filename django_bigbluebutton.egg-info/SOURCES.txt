@@ -10,6 +10,7 @@ django_bigbluebutton/forms.py
 django_bigbluebutton/models.py
 django_bigbluebutton/settings.py
 django_bigbluebutton/signals.py
+django_bigbluebutton/tasks.py
 django_bigbluebutton/tests.py
 django_bigbluebutton/urls.py
 django_bigbluebutton/utils.py
@@ -43,5 +44,7 @@ django_bigbluebutton/migrations/0012_meetinglog_meeting.py
 django_bigbluebutton/migrations/0013_auto_20201211_0601.py
 django_bigbluebutton/migrations/0014_auto_20201211_0920.py
 django_bigbluebutton/migrations/0015_auto_20201214_1423.py
+django_bigbluebutton/migrations/0016_auto_20210202_1546.py
+django_bigbluebutton/migrations/0017_auto_20210202_1600.py
 django_bigbluebutton/migrations/__init__.py
 django_bigbluebutton/templates/admin/meeting_create_link.html
