@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
-from django.template.response import TemplateResponse
 from django.urls import reverse, re_path, path
+from django.template.response import TemplateResponse
 
 from django.utils.html import format_html
 
-from .models import Meeting, MeetingLog
 from .forms import MeetingCreateLinkForm
 from .settings import UPDATE_RUNNING_ON_EACH_CALL
+from .models import Meeting, MeetingLog, MeetingRecord
 
 
 @admin.register(Meeting)
@@ -163,3 +163,4 @@ class MeetingAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MeetingLog)
+admin.site.register(MeetingRecord)

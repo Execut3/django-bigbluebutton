@@ -53,8 +53,8 @@ def update_meetings_records():
             }
             """
             MeetingRecord.objects.get_or_create(
-                url=record['url'],
+                link=record['url'],
                 name=record['name'],
                 record_id=record['record_id'],
-                meeting_id=record['meeting_id'],
+                meeting=meeting,
             )
