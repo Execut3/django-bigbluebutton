@@ -18,8 +18,8 @@ class Meeting(models.Model):
         Will store it's info here for later usages.
     """
     name = models.CharField(
-        max_length=200,
-        verbose_name=_('Name of Meeting')
+        max_length=255,
+        verbose_name=_('Meeting Name')
     )
     meeting_id = models.CharField(
         max_length=200, unique=True,
@@ -398,6 +398,60 @@ class Meeting(models.Model):
             logging.error('[-] Exception in update_running_meetings, {}'.format(str(e)))
 
 
+class MeetingRecord(models.Model):
+    """ Will hold recorded sessions of each meeting in this model.
+    """
+    meeting = models.ForeignKey(
+        null=True,
+        blank=True,
+        to=Meeting,
+        db_index=True,
+        related_name='records',
+        verbose_name=_('Meeting'),
+        on_delete=models.SET_NULL,
+    )
+    name = models.CharField(
+        default='',
+        max_length=255,
+        verbose_name=_('Record name')
+    )
+    record_id = models.CharField(
+        null=True,
+        blank=True,
+        db_index=True,
+        max_length=255,
+        verbose_name=_('Record ID'),
+    )
+    link = models.CharField(
+        null=True,
+        blank=True,
+        max_length=500,
+        verbose_name=_('Link'),
+    )
+
+    def __str__(self):
+        return '{}, {}'.format(self.meeting.name, self.record_id)
+
+    class Meta:
+        db_table = 'meeting_record'
+        verbose_name = 'Meeting Record'
+        verbose_name_plural = _("Meeting Record")
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        # if not self.link:
+            # self.update_link()
+
+        return super(MeetingRecord, self).save()
+
+    # def update_link(self):
+    #     if not self.record_id:
+    #         return
+    #
+    #     # Now getRecord link from
+
+
 class MeetingLog(models.Model):
     """ Will store detail logs about user joins and disconnects.
 
@@ -415,29 +469,32 @@ class MeetingLog(models.Model):
         related_name='meeting_log',
     )  # It can be null
     fullname = models.CharField(
+        null=True,
+        blank=True,
         default='',
         max_length=50,
-        null=True, blank=True,
         verbose_name=_('User fullname')
     )
-    # meeting = models.ForeignKey(
-    #     to=Meeting,
-    #     related_name='logs',
-    #     null=True, blank=True,
-    #     verbose_name=_('Meeting'),
-    #     on_delete=models.SET_NULL,
-    # )     # TODO: for now will not use it, cause will make complex when MeetingLog Update
-    meeting_id = models.CharField(
-        default='',
-        max_length=100,
-        verbose_name=_('Meeting ID')
-    )
+    meeting = models.ForeignKey(
+        null=True,
+        blank=True,
+        to=Meeting,
+        related_name='logs',
+        verbose_name=_('Meeting'),
+        on_delete=models.SET_NULL,
+    )     # TODO: for now will not use it, cause will make complex when MeetingLog Update
+    # meeting_id = models.CharField(
+    #     default='',
+    #     max_length=100,
+    #     verbose_name=_('Meeting ID')
+    # )
     join_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_('Join Date')
     )
     left_date = models.DateTimeField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         verbose_name=_('Left Date')
     )
 
