@@ -9,7 +9,6 @@ from .settings import *
 from .bbb import BigBlueButton
 from .utils import xml_to_json
 
-
 User = get_user_model()
 
 
@@ -260,11 +259,19 @@ class Meeting(models.Model):
                 }
             }
         """
-        logs = MeetingLog.objects.filter(meeting_id=self.meeting_id).select_related('user')
-        logs = list(logs)
+        logs = MeetingLog.objects. \
+            filter(meeting_id=self.meeting_id). \
+            select_related('user'). \
+            order_by('-updated_at')
+        logs = list(logs)   # Convert to list
 
-        presence_time_logs = {}     # A dict which it's keys are user_id s
+        # A dict which it's keys are user_id s (overall seconds each user was in meeting)
+        presence_time_logs = {}
+
+        # A list of logs of users in the meeting. for example when they joined, when left and ...
         activity_logs = []
+
+        # Now iterate on logs and calc duration and fill update variables.
         for log in logs:
             try:
                 userkey = log.fullname
@@ -406,7 +413,7 @@ class MeetingLog(models.Model):
         verbose_name=_('User'),
         on_delete=models.SET_NULL,
         related_name='meeting_log',
-    )       # It can be null
+    )  # It can be null
     fullname = models.CharField(
         default='',
         max_length=50,
@@ -462,4 +469,3 @@ class MeetingLog(models.Model):
             self.fullname = self.user.fullname
 
         super(MeetingLog, self).save()
-

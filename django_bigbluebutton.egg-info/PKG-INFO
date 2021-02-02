@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: django-bigbluebutton
-Version: 0.4.6
+Version: 0.4.7
 Summary: A Django integration APP to connect django projects to Big Blue Button ;)
 Home-page: https://github.com/Execut3/django-bigbluebutton
 Author: Execut3
