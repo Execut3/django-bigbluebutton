@@ -1,3 +1,4 @@
+import logging
 import urllib
 import random
 import requests
@@ -315,39 +316,45 @@ class BigBlueButton:
     # Recordings
     def get_meeting_records(self, meeting_id):
         """ Will return list of records for provided meeting_id """
-        call = 'getRecordings'
-        query = urllib.parse.urlencode((
-            ('meetingID', meeting_id),
-        ))
-        hashed = self.api_call(query, call)
-        url = self.api_url + call + '?' + hashed
-        content = requests.get(url).content
-        result = parse_xml(content)
-        print(result)
-        # Create dict of values for easy use in template
-        d = []
-        if result:
-            r = result[1].findall('recording')
-            for m in r:
-                record_id = m.find('recordID').text
-                meeting_id = m.find('meetingID').text
-                name = m.find('name').text
-                start_time = m.find('startTime').text
-                end_time = m.find('endTime').text
-                raw_size = m.find('rawSize').text
-                try:
-                    url = m.find('playback').find('format').find('url').text
-                except:
-                    url = ''
-                d.append({
-                    'url': url,
-                    'name': name,
-                    'end_time': end_time,
-                    'raw_size': raw_size,
-                    'record_id': record_id,
-                    'meeting_id': meeting_id,
-                    'start_time': start_time,
-                })
-        return d
+        try:
+            call = 'getRecordings'
+            query = urllib.parse.urlencode((
+                ('meetingID', meeting_id),
+            ))
+            hashed = self.api_call(query, call)
+            url = self.api_url + call + '?' + hashed
+            content = requests.get(url).content
+            result = parse_xml(content)
+            print(result)
+            # Create dict of values for easy use in template
+            d = []
+            if result:
+                r = result[1].findall('recording')
+                for m in r:
+                    try:
+                        record_id = m.find('recordID').text
+                        meeting_id = m.find('meetingID').text
+                        name = m.find('name').text
+                        start_time = m.find('startTime').text
+                        end_time = m.find('endTime').text
+                        raw_size = m.find('rawSize').text
+                        try:
+                            url = m.find('playback').find('format').find('url').text
+                        except:
+                            url = ''
+                        d.append({
+                            'url': url,
+                            'name': name,
+                            'end_time': end_time,
+                            'raw_size': raw_size,
+                            'record_id': record_id,
+                            'meeting_id': meeting_id,
+                            'start_time': start_time,
+                        })
+                    except Exception as e:
+                        logging.error(str(e))
+            return d
+        except Exception as e:
+            logging.error(str(e))
 
 
