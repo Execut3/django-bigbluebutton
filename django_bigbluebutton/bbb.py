@@ -198,7 +198,7 @@ class BigBlueButton:
             ('record', record),
             ('welcome', welcome),
             ('bannerText', welcome),
-            ('copyright', 'شرکت پیشرو اندیشه پرداز سی‌پل'),
+            ('copyright', BBB_COPYRIGHT_TEXT),
             ('logoutURL', logout_url),
             ('voiceBridge', voice_bridge),
             ('autoStartRecording', auto_start_recording),

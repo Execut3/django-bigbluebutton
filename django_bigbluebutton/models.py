@@ -332,6 +332,7 @@ class Meeting(models.Model):
         kwargs.update({
             'record': kwargs.get('record', BBB_RECORD),
             'logout_url': kwargs.get('logout_url', BBB_LOGOUT_URL),
+            'welcome_text': kwargs.get('welcome_text', BBB_WELCOME_TEXT),
             'auto_start_recording': kwargs.get('auto_start_recording', BBB_AUTO_RECORDING),
             'allow_start_stop_recording': kwargs.get('allow_start_stop_recording', BBB_ALLOW_START_STOP_RECORDING),
         })
@@ -348,13 +349,13 @@ class Meeting(models.Model):
         meeting.name = name
         meeting.is_running = True
         meeting.record = kwargs.get('record', True)
-        meeting.welcome_text = meeting_json['meetingID']
         meeting.logout_url = kwargs.get('logout_url', '')
         meeting.voice_bridge = meeting_json['voiceBridge']
         meeting.attendee_password = meeting_json['attendeePW']
         meeting.moderator_password = meeting_json['moderatorPW']
         meeting.parent_meeting_id = meeting_json['parentMeetingID']
         meeting.internal_meeting_id = meeting_json['internalMeetingID']
+        meeting.welcome_text = kwargs.get('welcome_text', BBB_WELCOME_TEXT)
         meeting.auto_start_recording = kwargs.get('auto_start_recording', True)
         meeting.allow_start_stop_recording = kwargs.get('allow_start_stop_recording', True)
         meeting.save()
