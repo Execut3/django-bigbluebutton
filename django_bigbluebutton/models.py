@@ -260,7 +260,7 @@ class Meeting(models.Model):
             }
         """
         logs = MeetingLog.objects. \
-            filter(meeting_id=self.meeting_id). \
+            filter(meeting__meeting_id=self.meeting_id). \
             select_related('user'). \
             order_by('-updated_at')
         logs = list(logs)   # Convert to list
