@@ -1,13 +1,13 @@
-import datetime
 import logging
+import datetime
 
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from .settings import *
-from .bbb import BigBlueButton
 from .utils import xml_to_json
+from .bbb import BigBlueButton
 
 User = get_user_model()
 
@@ -437,20 +437,6 @@ class MeetingRecord(models.Model):
         verbose_name = 'Meeting Record'
         verbose_name_plural = _("Meeting Record")
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-
-        # if not self.link:
-            # self.update_link()
-
-        return super(MeetingRecord, self).save()
-
-    # def update_link(self):
-    #     if not self.record_id:
-    #         return
-    #
-    #     # Now getRecord link from
-
 
 class MeetingLog(models.Model):
     """ Will store detail logs about user joins and disconnects.
@@ -482,12 +468,7 @@ class MeetingLog(models.Model):
         related_name='logs',
         verbose_name=_('Meeting'),
         on_delete=models.SET_NULL,
-    )     # TODO: for now will not use it, cause will make complex when MeetingLog Update
-    # meeting_id = models.CharField(
-    #     default='',
-    #     max_length=100,
-    #     verbose_name=_('Meeting ID')
-    # )
+    )
     join_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_('Join Date')
