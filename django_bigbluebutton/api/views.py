@@ -84,7 +84,7 @@ class MeetingViewSet(ModelViewSet):
 
                         if event_id == 'user-joined':
                             m, _ = MeetingLog.objects.create(
-                                meeting_id=meeting_id,
+                                meeting=meeting,
                                 user_id=user_id_valid
                             )
                     except Exception as e:
