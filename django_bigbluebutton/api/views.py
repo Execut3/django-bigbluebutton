@@ -66,11 +66,16 @@ class MeetingViewSet(ModelViewSet):
 
                         current_datetime = datetime.datetime.now()
 
+                        from django_bigbluebutton.models import Meeting
+                        meeting = Meeting.objects.filter(meeting_id=meeting_id).first()
+                        if not meeting:
+                            continue
+
                         # When user-joined/left is received
                         # By default we should set current date
                         # To all logs of this user which are null yet
                         MeetingLog.objects.filter(
-                            meeting_id=meeting_id,
+                            meeting=meeting,
                             user_id=user_id_valid,
                             left_date__isnull=True
                         ).update(
