@@ -6,8 +6,8 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from .settings import *
-from .utils import xml_to_json
 from .bbb import BigBlueButton
+from .utils import xml_to_json
 
 User = get_user_model()
 
@@ -149,7 +149,8 @@ class Meeting(models.Model):
         verbose_name = 'Meeting'
         verbose_name_plural = _('Meeting')
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
         if not self.name:
             self.name = self.meeting_id
         super(Meeting, self).save()

@@ -4,11 +4,11 @@ projects to do some syncing functions.
 
 Like updating records of meetings, update logs and ...
 """
-import datetime
 import logging
+import datetime
 
-from .models import Meeting, MeetingLog, MeetingRecord
 from .bbb import BigBlueButton
+from .models import Meeting, MeetingLog, MeetingRecord
 
 
 def update_meetings_logs():
