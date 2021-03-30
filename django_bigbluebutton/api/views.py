@@ -44,6 +44,8 @@ class MeetingViewSet(ModelViewSet):
             ]&timestamp=1607608642905&domain=meeting.cpol.co
         """
         event_data = request.data.get('event', '')
+        current_datetime = datetime.datetime.now()
+
         try:
             tmp = urllib.parse.unquote(event_data)
             event_data = json.loads(tmp)
@@ -63,8 +65,6 @@ class MeetingViewSet(ModelViewSet):
 
                         if not user_id_valid:
                             continue
-
-                        current_datetime = datetime.datetime.now()
 
                         from django_bigbluebutton.models import Meeting
                         meeting = Meeting.objects.filter(meeting_id=meeting_id).first()
@@ -90,6 +90,25 @@ class MeetingViewSet(ModelViewSet):
                     except Exception as e:
                         logging.error(str(e))
                         # TODO: Should be handled better later!
+                elif event_id == 'meeting-ended':
+                    try:
+                        attributes = e['attributes']
+                        meeting_id = attributes['meeting']['external-meeting-id']
+
+                        from django_bigbluebutton.models import Meeting
+                        meeting = Meeting.objects.filter(meeting_id=meeting_id).first()
+                        if not meeting:
+                            continue
+
+                        # Now bulk update all meetingLogs which their left_date is null
+                        MeetingLog.objects.filter(
+                            meeting=meeting,
+                            left_date__isnull=True
+                        ).update(
+                            left_date=current_datetime
+                        )
+                    except Exception as e:
+                        logging.error(str(e))
 
         except Exception as e:
             print(e)
