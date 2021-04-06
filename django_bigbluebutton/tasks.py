@@ -19,13 +19,16 @@ def update_meetings_logs():
 
     meetings = Meeting.objects.all()
     for meeting in meetings:
-        is_running = meeting.check_is_running(commit=True)
-        if not is_running:
-            now_date = datetime.datetime.now()
-            MeetingLog.objects.filter(
-                meeting_id=meeting.meeting_id,
-                left_date__isnull=True
-            ).update(left_date=now_date)
+        try:
+            is_running = meeting.check_is_running(commit=True)
+            if not is_running:
+                now_date = datetime.datetime.now()
+                MeetingLog.objects.filter(
+                    meeting_id=meeting.meeting_id,
+                    left_date__isnull=True
+                ).update(left_date=now_date)
+        except Exception as e:
+            logging.error(str(e))
     logging.info('[+] Done checking meetings and updating logs for them.')
 
 
@@ -38,23 +41,26 @@ def update_meetings_records():
 
     meetings = Meeting.objects.all()
     for meeting in meetings:
-        bbb = BigBlueButton()
-        recordings = bbb.get_meeting_records(meeting.meeting_id)
-        for record in recordings:
-            """ record sample:
-            {
-                'url': 'https://meeting.cpol.co/playback/presentation/2.0/playback.html?meetingId=0c19812ecd8955d77a3351a4e489fe50afcc-1612087443063',
-                'name': 'name of meeting',
-                'end_time': 1612099936637,
-                'raw_size': 165691706,
-                'record_id': '0c19812ecd8955d77a3351a4e489fe50afcc-1612087443063',
-                'meeting_id': 'meeting-id',
-                'start_time': 1612087443063,
-            }
-            """
-            MeetingRecord.objects.get_or_create(
-                link=record['url'],
-                name=record['name'],
-                record_id=record['record_id'],
-                meeting=meeting,
-            )
+        try:
+            bbb = BigBlueButton()
+            recordings = bbb.get_meeting_records(meeting.meeting_id)
+            for record in recordings:
+                """ record sample:
+                {
+                    'url': 'https://meeting.cpol.co/playback/presentation/2.0/playback.html?meetingId=0c19812ecd8955d77a3351a4e489fe50afcc-1612087443063',
+                    'name': 'name of meeting',
+                    'end_time': 1612099936637,
+                    'raw_size': 165691706,
+                    'record_id': '0c19812ecd8955d77a3351a4e489fe50afcc-1612087443063',
+                    'meeting_id': 'meeting-id',
+                    'start_time': 1612087443063,
+                }
+                """
+                MeetingRecord.objects.get_or_create(
+                    link=record['url'],
+                    name=record['name'],
+                    record_id=record['record_id'],
+                    meeting=meeting,
+                )
+        except Exception as e:
+            logging.error(str(e))
