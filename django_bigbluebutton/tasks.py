@@ -24,7 +24,7 @@ def update_meetings_logs():
             if not is_running:
                 now_date = datetime.datetime.now()
                 MeetingLog.objects.filter(
-                    meeting_id=meeting.meeting_id,
+                    meeting__meeting_id=meeting.meeting_id,
                     left_date__isnull=True
                 ).update(left_date=now_date)
         except Exception as e:
