@@ -165,7 +165,8 @@ class Meeting(models.Model):
 
     def check_is_running(self, commit=True):
         """ Call bbb is_running method, and see if this meeting_id is running! """
-        self.is_running = BigBlueButton().is_running(self.meeting_id)
+        is_running = BigBlueButton().is_running(self.meeting_id)
+        self.is_running = True if is_running in ['true', True, 'True'] else False
         if commit:
             self.save()
         return self.is_running
