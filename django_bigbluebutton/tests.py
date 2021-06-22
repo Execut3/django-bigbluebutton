@@ -132,7 +132,8 @@ class BBBTest(TestCase):
         self.assertTrue(len2 - len1 == 1)
 
     def test_callback_api(self):
-        data = [{
+        data = '''
+        [{
             "data":{
                  "type":"event",
                  "id":"user-joined",
@@ -153,4 +154,10 @@ class BBBTest(TestCase):
                     "ts":1624364288797
                  }
             }
-       }]
+        }]
+        '''
+        url = 'api/meeting/66/callback/'
+        res = self.client.post(url, data, content_type='application/json')
+        print(res.status_code)
+        print(res.content)
+

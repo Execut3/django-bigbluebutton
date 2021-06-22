@@ -43,12 +43,14 @@ class MeetingViewSet(ModelViewSet):
                }
             ]&timestamp=1607608642905&domain=meeting.cpol.co
         """
+        print('here')
         event_data = request.data.get('event', '')
         current_datetime = datetime.datetime.now()
 
         try:
             tmp = urllib.parse.unquote(event_data)
             event_data = json.loads(tmp)
+            print(event_data)
             for e in event_data:
                 e = e['data']
                 event_id = e['id']
@@ -83,13 +85,12 @@ class MeetingViewSet(ModelViewSet):
                         )
 
                         if event_id == 'user-joined':
-                            m, _ = MeetingLog.objects.create(
+                            MeetingLog.objects.create(
                                 meeting=meeting,
                                 user_id=user_id_valid
                             )
                     except Exception as e:
                         logging.error(str(e))
-                        # TODO: Should be handled better later!
                 elif event_id == 'meeting-ended':
                     try:
                         attributes = e['attributes']
