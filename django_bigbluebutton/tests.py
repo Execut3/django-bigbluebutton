@@ -131,7 +131,26 @@ class BBBTest(TestCase):
         self.assertTrue(len1 != len2)
         self.assertTrue(len2 - len1 == 1)
 
-    def test_get_meeting_info_method(self):
-        """ In this test, Will test if get_meeting_info method
-        is working or not, and does it have useful info like
-        list of """
+    def test_callback_api(self):
+        data = [{
+            "data":{
+                 "type":"event",
+                 "id":"user-joined",
+                 "attributes":{
+                    "meeting":{
+                       "internal-meeting-id":"914732701ca2fba8097f125f20eff107203b303e-1624350420282",
+                       "external-meeting-id":"meeting-id"
+                    },
+                    "user":{
+                       "internal-user-id":"w_eunlmvgzcnlz",
+                       "external-user-id":"161",
+                       "name":"test user",
+                       "role":"VIEWER",
+                       "presenter":False
+                    }
+                 },
+                 "event":{
+                    "ts":1624364288797
+                 }
+            }
+       }]
