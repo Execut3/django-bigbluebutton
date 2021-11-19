@@ -15,7 +15,7 @@ def update_meetings_logs():
     """ Will iterate on all meetings, and check if they are closed,
     will close meetingLogs joined to them.
     """
-    logging.info('[+] Checking meetings and close left out meetingLogs.')
+    logging.info('[+] Check meetings and close left out meetingLogs.')
 
     meetings = Meeting.objects.all()
     for meeting in meetings:
@@ -33,7 +33,9 @@ def update_meetings_logs():
 
 
 def update_meetings_records():
-    """ Will iterate on meetings, check if new record is created for them by bbb,
+    """
+    Will iterate on meetings,
+    check if new record is created for them by bbb,
     then save it in database for showing to customers.
     """
 

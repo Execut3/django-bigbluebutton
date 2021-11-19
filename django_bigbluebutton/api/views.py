@@ -12,7 +12,7 @@ from .serializers import MeetingSerializer
 
 
 class MeetingViewSet(ModelViewSet):
-    queryset = Meeting.objects.all().prefetch_related('user', 'meeting')
+    queryset = Meeting.objects.all()
     serializer_class = MeetingSerializer
 
     @action(methods=['post'], detail=True, url_path='callback')
