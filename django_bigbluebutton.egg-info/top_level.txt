@@ -1,1 +1,1 @@
-django_bigbluebutton
+django_prefetch_relatedbigbluebutton
