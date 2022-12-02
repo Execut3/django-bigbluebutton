@@ -4,7 +4,7 @@ A Django Application for better interaction of Django projects with Big Blue But
 
 ### Requirements
 
-To use this package following needed. if not provided will be installed automatically.
+To use django-bigbluebutton followingpackages are needed. If you don't have them installed, they will be installed automatically.
 ```
 Django>=2.0
 requests>=2.0
@@ -36,7 +36,7 @@ BBB_API_URL = 'https://test.com/bigbluebutton/api/'
 BBB_SECRET_KEY = 'abcdefgabcdefgabcdefgabcdefgabcdefg'
 ```
 
-Next apply migrations:
+Next Apply migrations:
 ```bash
 python manage.py migrate
 ```
