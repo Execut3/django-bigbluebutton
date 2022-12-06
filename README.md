@@ -51,7 +51,7 @@ Next Apply migrations:
 python manage.py migrate
 ```
 
-And finally run test:
+Run tests to check if installation and configurations are done properly:
 
 ```bash
 python manage.py test
