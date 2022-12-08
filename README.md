@@ -4,9 +4,9 @@ A Django Application for better interaction of Django projects with Big Blue But
 
 Features:
 
-- Create room on BBB and store meeting info in a model for later access
-- Start a meeting
-- End a meeting
+- Createa  room on BBB and store the meeting info in a model for later access
+- Start a meeting having meeting id
+- End a meeting having meeting id
 - Create join link for a meeting with moderator or normal access
 - Get meeting report (activity of users in meeting and time log of them)
 - Log each meeting for later access and reportings
@@ -30,7 +30,7 @@ install using pip:
 pip install django-bigbluebutton
 ```
 
-### Usage
+### Configure App
 Register app in `settings.py`
 
 ```python
@@ -56,6 +56,8 @@ Run tests to check if installation and configurations are done properly:
 ```bash
 python manage.py test
 ```
+
+### Usage
 
 You can follow `tests.py` file to see how to use this package.
 
