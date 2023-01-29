@@ -1,10 +1,10 @@
 # django-bigbluebutton
 
-A Django Application for better interaction of Django projects with Big Blue Button APIs.
+A Django Application for better interaction of Django projects with BigBlueButton APIs.
 
 Features:
 
-- Createa  room on BBB and store the meeting info in a model for later access
+- Create a room on BBB and store the meeting info in a model for later access
 - Start a meeting having meeting id
 - End a meeting having meeting id
 - Create join link for a meeting with moderator or normal access
