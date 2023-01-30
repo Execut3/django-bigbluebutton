@@ -39,20 +39,19 @@ INSTALLED_APPS = [
 ]
 ```
 
-Now should define you Big Blue Button Server core configs in `settings.py`:
+Now should define you Big Blue Button Server configs in `settings.py`:
 
 ```python
 BBB_API_URL = 'https://test.com/bigbluebutton/api/'
 BBB_SECRET_KEY = 'abcdefgabcdefgabcdefgabcdefgabcdefg'
 ```
 
-Next Apply migrations:
+Next run migrate:
 ```bash
 python manage.py migrate
 ```
 
-Run tests to check if installation and configurations are done properly:
-
+Run tests to check if installation is done:
 ```bash
 python manage.py test
 ```
