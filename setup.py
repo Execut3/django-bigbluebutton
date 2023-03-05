@@ -8,7 +8,7 @@ setup(
     name='django-bigbluebutton',
     version='0.5.9',
     packages=['django_bigbluebutton'],
-    description='A Django integration APP to connect django projects to Big Blue Button ;)',
+    description='A Django APP to Integrate BigBlueButton APIs with your current Project',
     long_description=README,
     long_description_content_type='text/markdown',
     author='Execut3',
