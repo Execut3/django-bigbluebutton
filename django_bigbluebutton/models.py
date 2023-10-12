@@ -214,7 +214,7 @@ class Meeting(models.Model):
 
         TODO: Maybe it's better to delete hooks first then create new one.
         """
-        callback_url = settings.BBB_CALLBACK_URL
+        callback_url = settings.get('BBB_CALLBACK_URL', None)
         if callback_url:
             try:
                 # Be noted meeting_id is different from id,
